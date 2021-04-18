@@ -1,19 +1,18 @@
 package com.fantasyfang.materialluckywheel
 
+import android.R.attr.textColor
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
+import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.withTranslation
+import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
+
 
 class MaterialLuckyWheelView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -64,25 +63,10 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
                 //3 Draw text
                 drawTargetText(canvas, index, sweepAngle, luckyItem.text, luckyItem.backgroundColor)
+
+    
             }
         }
-    }
-
-    private fun drawTargetText(
-        canvas: Canvas,
-        index: Int,
-        sweepAngle: Float,
-        text: String,
-        @ColorRes backgroundColor: Int
-    ) {
-        val path = Path()
-        path.addArc(outsideRectF, index * sweepAngle, sweepAngle)
-
-        val textWidth: Float = textPaint.measureText(text)
-        val hOffset = (radius * Math.PI / itemList.size - textWidth / 2).toFloat()
-        val vOffset = 60f//TODO: Use topTextPadding
-
-        canvas.drawTextOnPath(text, path, hOffset, vOffset, textPaint)
     }
 
     private fun drawTargetArc(canvas: Canvas, index: Int, sweepAngle: Float) {
@@ -94,6 +78,24 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             arcPaint
         )
     }
+
+    private fun drawTargetText(
+        canvas: Canvas, index: Int, sweepAngle: Float, text: String,
+        @ColorRes backgroundColor: Int
+    ) {
+        val path = Path()
+        path.addArc(outsideRectF, index * sweepAngle, sweepAngle)
+
+        //if (textColor == 0)
+        textPaint.color = if (backgroundColor.isColorDark()) Color.WHITE else Color.BLACK
+
+        val textWidth: Float = textPaint.measureText(text)
+        val hOffset = (radius * Math.PI / itemList.size - textWidth / 2).toFloat()
+        val vOffset = 80f//TODO: Use topTextPadding
+
+        canvas.drawTextOnPath(text, path, hOffset, vOffset, textPaint)
+    }
+
 
     private fun demoDrawArc(canvas: Canvas) {
         canvas.drawArc(outsideRectF, 0f, 120f, true, arcPaint)
