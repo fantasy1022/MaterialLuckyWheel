@@ -11,20 +11,20 @@ class MainActivity : AppCompatActivity() {
         val items = listOf(
             LuckyItem(
                 "1000",
-                R.drawable.ic_launcher_foreground,
+                R.drawable.chrome_icon,
                 R.color.teal_200
             ),
             LuckyItem(
                 "9000",
-                R.drawable.ic_launcher_foreground,
+                R.drawable.amazon_icon,
                 R.color.teal_700
             ), LuckyItem(
                 "2000",
-                R.drawable.ic_launcher_foreground,
+                R.drawable.dropbox_icon,
                 R.color.purple_700
             ), LuckyItem(
                 "100",
-                R.drawable.ic_launcher_foreground,
+                R.drawable.disney_icon,
                 R.color.purple_200
             )
         )

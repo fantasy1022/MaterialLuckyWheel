@@ -1,6 +1,6 @@
 package com.fantasyfang.materialluckywheel
 
-import android.R.attr.textColor
+import android.R.attr.bitmap
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -12,13 +12,15 @@ import androidx.core.graphics.withTranslation
 import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 class MaterialLuckyWheelView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val radius: Float = 400f
+    private val radius = 400f
     private lateinit var itemList: List<LuckyItem>
 
     //Paint
@@ -64,7 +66,11 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 //3 Draw text
                 drawTargetText(canvas, index, sweepAngle, luckyItem.text, luckyItem.backgroundColor)
 
-    
+                //4 Draw icon
+                drawImage(
+                    canvas, index, sweepAngle,
+                    BitmapFactory.decodeResource(resources, luckyItem.icon)
+                )
             }
         }
     }
@@ -96,6 +102,21 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         canvas.drawTextOnPath(text, path, hOffset, vOffset, textPaint)
     }
 
+    private fun drawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
+        val imgWidth = radius / itemList.size
+        val angle = ((index * sweepAngle + 360f / itemList.size / 2) * Math.PI / 180)
+
+        val x = (radius / 2 / 2 * cos(angle))
+        val y = (radius / 2 / 2 * sin(angle))
+
+        //TODO: check position
+        val rect = Rect(
+            (x - imgWidth / 2).toInt(), (y - imgWidth / 2).toInt(),
+            (x + imgWidth / 2).toInt(), (y + imgWidth / 2).toInt()
+        )
+
+        canvas.drawBitmap(bitmap, null, rect, null)
+    }
 
     private fun demoDrawArc(canvas: Canvas) {
         canvas.drawArc(outsideRectF, 0f, 120f, true, arcPaint)
