@@ -1,11 +1,15 @@
 package com.fantasyfang.materialluckywheel
 
+import android.animation.Animator
+import android.animation.TimeInterpolator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.withTranslation
@@ -141,13 +145,75 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
     }
 
+    fun rotateTo(
+        index: Int,
+        rotationDirection: RotationDirection,
+        timeInterpolator: TimeInterpolator = AccelerateInterpolator(),
+        duration: Long = 500L
+    ) {
+        //TODO: index range check
+        val multiplier = if (rotation > 200f) 2 else 1
+
+        animate()
+            .setInterpolator(timeInterpolator)
+            .setDuration(2000L)
+            .setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    rotation = 0f
+//                    rotateTo(index, rotationDirection)
+                    decelerateAnimation()
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) {
+                }
+            })
+            .rotation(360f * multiplier * rotationDirection.value)
+            .start()
+
+
+
+    }
+
+    private fun decelerateAnimation() {
+        val targetAngle: Float = 240f
+        //            360f * mRoundOfNumber * rotationAssess + 270f - getAngleOfIndexTarget(index) - 360f / mLuckyItemList.size() / 2
+        animate()
+            .setInterpolator(DecelerateInterpolator())
+            .setDuration(3000 + 900L)
+            .setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+    //                    isRunning = true
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+    //                    isRunning = false
+                    rotation = rotation % 360f
+    //                    if (mPieRotateListener != null) {
+    //                        mPieRotateListener.rotateDone(index)
+    //                    }
+                }
+
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            })
+            .rotation(targetAngle)
+            .start()
+    }
+
+
     private fun demoDrawArc(canvas: Canvas) {
         canvas.drawArc(outsideRectF, 0f, 120f, true, arcPaint)
         canvas.drawArc(outsideRectF, 120f, 120f, true, arcPaint)
         canvas.drawArc(outsideRectF, 240f, 120f, true, arcPaint)
     }
 
-    private fun demoDrawImage(canvas: Canvas, index: Int, sweepAngle: Float , bitmap: Bitmap) {
+    private fun demoDrawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
         val imgWidth = radius / itemList.size
         val angle = ((index * sweepAngle + 360f / itemList.size / 2) * Math.PI / 180)
 
@@ -163,5 +229,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             (x + imgWidth / 2).toInt(), (y + imgWidth / 2).toInt()
         )
         canvas.drawBitmap(bitmap, null, rect, null)
+    }
+
+    enum class RotationDirection(val value: Int) {
+        Clockwise(1), Counterclockwise(-1)
     }
 }
