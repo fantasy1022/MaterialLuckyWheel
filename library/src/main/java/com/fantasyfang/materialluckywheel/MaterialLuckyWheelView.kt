@@ -1,9 +1,9 @@
 package com.fantasyfang.materialluckywheel
 
-import android.R.attr.bitmap
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.ColorRes
@@ -21,6 +21,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val radius = 400f
+    private val degToPi = Math.PI / 180
     private lateinit var itemList: List<LuckyItem>
 
     //Paint
@@ -103,19 +104,41 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     private fun drawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
-        val imgWidth = radius / itemList.size
-        val angle = ((index * sweepAngle + 360f / itemList.size / 2) * Math.PI / 180)
-
-        val x = (radius / 2 / 2 * cos(angle))
-        val y = (radius / 2 / 2 * sin(angle))
-
-        //TODO: check position
-        val rect = Rect(
-            (x - imgWidth / 2).toInt(), (y - imgWidth / 2).toInt(),
-            (x + imgWidth / 2).toInt(), (y + imgWidth / 2).toInt()
-        )
-
-        canvas.drawBitmap(bitmap, null, rect, null)
+        //TODO: check scale, rotate and position logic
+        when (index) {
+            0 -> {
+                val matrix = Matrix().apply {
+                    postScale(0.5f, 0.5f)
+                    postRotate(135f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
+                    postTranslate(50f, 50f)
+                }
+                canvas.drawBitmap(bitmap, matrix, null)
+            }
+            1 -> {
+                val matrix = Matrix().apply {
+                    postScale(0.5f, 0.5f)
+                    postRotate(225f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
+                    postTranslate(-250f, 50f)
+                }
+                canvas.drawBitmap(bitmap, matrix, null)
+            }
+            2 -> {
+                val matrix = Matrix().apply {
+                    postScale(0.5f, 0.5f)
+                    postRotate(315f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
+                    postTranslate(-250f, -250f)
+                }
+                canvas.drawBitmap(bitmap, matrix, null)
+            }
+            3 -> {
+                val matrix = Matrix().apply {
+                    postScale(0.5f, 0.5f)
+                    postRotate(45f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
+                    postTranslate(50f, -250f)
+                }
+                canvas.drawBitmap(bitmap, matrix, null)
+            }
+        }
     }
 
     private fun demoDrawArc(canvas: Canvas) {
@@ -124,4 +147,21 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         canvas.drawArc(outsideRectF, 240f, 120f, true, arcPaint)
     }
 
+    private fun demoDrawImage(canvas: Canvas, index: Int, sweepAngle: Float , bitmap: Bitmap) {
+        val imgWidth = radius / itemList.size
+        val angle = ((index * sweepAngle + 360f / itemList.size / 2) * Math.PI / 180)
+
+        Log.d("Fam", "angle:$angle")
+        val x = (radius / 2 * cos(angle))
+        val y = (radius / 2 * sin(angle))
+
+        Log.d("Fam", "x:$x")
+        Log.d("Fam", "y:$y")
+        //TODO: check position
+        val rect = Rect(
+            (x - imgWidth / 2).toInt(), (y - imgWidth / 2).toInt(),
+            (x + imgWidth / 2).toInt(), (y + imgWidth / 2).toInt()
+        )
+        canvas.drawBitmap(bitmap, null, rect, null)
+    }
 }
