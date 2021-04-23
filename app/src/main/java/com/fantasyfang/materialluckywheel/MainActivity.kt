@@ -2,7 +2,9 @@ package com.fantasyfang.materialluckywheel
 
 import android.R.attr.data
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import kotlin.random.Random
@@ -37,11 +39,20 @@ class MainActivity : AppCompatActivity() {
 
         val luckyWheelView = findViewById<MaterialLuckyWheelView>(R.id.lucky_view)
         luckyWheelView.setItemList(items)
+        luckyWheelView.setMaterialLuckyWheelViewListener(object :
+            MaterialLuckyWheelView.MaterialLuckyWheelViewListener {
+            override fun onItemSelected(item: LuckyItem) {
+                Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG).show()
+            }
+        })
 
         findViewById<Button>(R.id.rotate_btn).setOnClickListener {
             luckyWheelView.rotateTo(
-                getRandomIndex(),
-                MaterialLuckyWheelView.RotationDirection.Clockwise
+                getRandomIndex().apply {
+                    Log.d("Fan", "rotate index: $this")
+                },
+                MaterialLuckyWheelView.RotationDirection.Clockwise,
+                5000
             )
         }
     }

@@ -26,7 +26,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
     private val radius = 400f
     private val degToPi = Math.PI / 180
+    private var isRunning = false
     private lateinit var itemList: List<LuckyItem>
+    var listener: MaterialLuckyWheelViewListener? = null
+
+    interface MaterialLuckyWheelViewListener {
+        fun onItemSelected(item: LuckyItem)
+    }
 
     //Paint
     private val arcPaint = Paint().apply {
@@ -145,67 +151,70 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
     }
 
+    fun setMaterialLuckyWheelViewListener(listener: MaterialLuckyWheelViewListener) {
+        this.listener = listener
+    }
+
     fun rotateTo(
         index: Int,
         rotationDirection: RotationDirection,
-        timeInterpolator: TimeInterpolator = AccelerateInterpolator(),
-        duration: Long = 500L
+        durationInMilliSeconds: Long = 5000L,
+        rotationDegree: Float = 5040f,
+        timeInterpolator: TimeInterpolator = AccelerateInterpolator()
     ) {
-        //TODO: index range check
-        val multiplier = if (rotation > 200f) 2 else 1
 
         animate()
             .setInterpolator(timeInterpolator)
-            .setDuration(2000L)
+            .setDuration(durationInMilliSeconds / 2)
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator?) {
+                    rotation = 0f
+                    isRunning = true
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
                     rotation = 0f
-//                    rotateTo(index, rotationDirection)
-                    decelerateAnimation()
+                    isRunning = false
+                    decelerateAnimation(index, durationInMilliSeconds / 2, rotationDegree)
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {
-                }
-
-                override fun onAnimationRepeat(animation: Animator?) {
-                }
+                override fun onAnimationCancel(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator?) {}
             })
-            .rotation(360f * multiplier * rotationDirection.value)
+            .rotation(rotationDegree * rotationDirection.value)
             .start()
-
-
-
     }
 
-    private fun decelerateAnimation() {
-        val targetAngle: Float = 240f
-        //            360f * mRoundOfNumber * rotationAssess + 270f - getAngleOfIndexTarget(index) - 360f / mLuckyItemList.size() / 2
+    //Set the last round
+    private fun decelerateAnimation(
+        index: Int,
+        durationInMilliSeconds: Long,
+        rotationDegree: Float
+    ) {
+        val offset = 45f // get from sweep angle
+        val targetDegree = getAngleOfIndexTarget(index) + rotationDegree + offset
+
         animate()
             .setInterpolator(DecelerateInterpolator())
-            .setDuration(3000 + 900L)
+            .setDuration(durationInMilliSeconds)
             .setListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {
-    //                    isRunning = true
-                }
+                override fun onAnimationStart(animation: Animator) {}
 
                 override fun onAnimationEnd(animation: Animator) {
-    //                    isRunning = false
-                    rotation = rotation % 360f
-    //                    if (mPieRotateListener != null) {
-    //                        mPieRotateListener.rotateDone(index)
-    //                    }
+                    isRunning = false
+                    listener?.onItemSelected(itemList[index])
                 }
 
                 override fun onAnimationCancel(animation: Animator) {}
                 override fun onAnimationRepeat(animation: Animator) {}
             })
-            .rotation(targetAngle)
+            .rotation(targetDegree)
             .start()
     }
 
+    private fun getAngleOfIndexTarget(index: Int): Float {
+        return 360f / itemList.size * index
+    }
 
     private fun demoDrawArc(canvas: Canvas) {
         canvas.drawArc(outsideRectF, 0f, 120f, true, arcPaint)
