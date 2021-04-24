@@ -14,6 +14,7 @@ import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.withTranslation
+import com.fantasyfang.library.R
 import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
@@ -92,6 +93,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                     canvas, index, sweepAngle,
                     BitmapFactory.decodeResource(resources, luckyItem.icon)
                 )
+
+                //5 Draw center image
+//                drawCircle(0f, 0f, 50f, centerImagePaint)
+//                drawText("GO!",0f,0f,textPaint)
+
+                //6 Draw cursor
+//                drawCursor(canvas)
             }
         }
     }
@@ -225,7 +233,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
     fun rotateTo(
         index: Int,
-        rotationDirection: RotationDirection,
+        rotationDirection: RotationDirection = RotationDirection.Clockwise,
         durationInMilliSeconds: Long = 5000L,
         rotationDegree: Float = 5040f,
         timeInterpolator: TimeInterpolator = AccelerateInterpolator()
@@ -294,6 +302,11 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     private fun getFallBackRandomIndex(): Int = Random.Default.nextInt(itemList.size)
+
+    private fun drawCursor(canvas: Canvas) {
+//        draw
+
+    }
 
     private fun demoDrawArc(canvas: Canvas) {
         canvas.drawArc(outsideRectF, 0f, 120f, true, arcPaint)

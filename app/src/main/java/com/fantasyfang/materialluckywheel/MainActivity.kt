@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
-    val items = listOf(
+    private val items = listOf(
         LuckyItem(
             "1000",
             R.drawable.chrome_icon,
@@ -36,26 +36,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val luckyWheelLayout = findViewById<MaterialLuckyWheelLayout>(R.id.lucky_view)
+        luckyWheelLayout.setItemList(items)
+        luckyWheelLayout.isTouchEnabled = true
+//        luckyWheelView.setMaterialLuckyWheelViewListener(object : //TODO: change to lambda
+//            MaterialLuckyWheelView.MaterialLuckyWheelViewListener {
+//            override fun onItemSelected(item: LuckyItem) {
+//                Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG).show()
+//            }
+//        })
 
-        val luckyWheelView = findViewById<MaterialLuckyWheelView>(R.id.lucky_view)
-        luckyWheelView.setItemList(items)
-        luckyWheelView.isTouchEnabled = true
-        luckyWheelView.setMaterialLuckyWheelViewListener(object : //TODO: change to lambda
-            MaterialLuckyWheelView.MaterialLuckyWheelViewListener {
-            override fun onItemSelected(item: LuckyItem) {
-                Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG).show()
-            }
-        })
-
-        findViewById<Button>(R.id.rotate_btn).setOnClickListener {
-            luckyWheelView.rotateTo(
-                getRandomIndex().apply {
-                    Log.d("Fan", "rotate index: $this")
-                },
-                MaterialLuckyWheelView.RotationDirection.Clockwise,
-                5000
-            )
-        }
+//        findViewById<Button>(R.id.rotate_btn).setOnClickListener {
+//            luckyWheelLayout.rotateTo(
+//                getRandomIndex().apply {
+//                    Log.d("Fan", "rotate index: $this")
+//                },
+//                MaterialLuckyWheelView.RotationDirection.Clockwise,
+//                5000
+//            )
+//        }
     }
 
     private fun getRandomIndex(): Int {
