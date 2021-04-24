@@ -17,6 +17,7 @@ import androidx.core.graphics.withTranslation
 import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -29,6 +30,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val degToPi = Math.PI / 180
     private var isRunning = false
     var isTouchEnabled = false
+    private var viewRotation = 0f
+    private var fingerRotation = 0.0
+    private var downPressTime = 0L
     private lateinit var itemList: List<LuckyItem>
     private var listener: MaterialLuckyWheelViewListener? = null
 
@@ -88,8 +92,48 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return super.onTouchEvent(event)
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (isRunning || !isTouchEnabled) {
+            return false
+        }
+
+        val x = event.x
+        val y = event.y
+        Log.d("Fan", "onTouchEvent:$x, $$y")
+
+        val xCenter = width / 2.toDouble()
+        val yCenter = height / 2.toDouble()
+        Log.d("Fan", "onTouchEvent xCenter:$xCenter, $$yCenter")
+        val newFingerRotation: Double
+
+        return when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                viewRotation = rotation
+                Log.d("Fan", "ACTION_DOWN rotation:$rotation")
+                fingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y));
+                Log.d("Fan", "ACTION_DOWN fingerRotation:$fingerRotation")
+                downPressTime = event.eventTime
+                Log.d("Fan", "ACTION_DOWN downPressTime:$downPressTime")
+                true
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                newFingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y))
+                //TODO: check rotation is consist and view jitter
+                rotation = newRotationValue(viewRotation, fingerRotation, newFingerRotation)
+                Log.d("Fan", "ACTION_MOVE")
+                true
+            }
+            MotionEvent.ACTION_UP -> {
+
+                Log.d("Fan", "ACTION_UP")
+                true
+            }
+            else -> {
+                Log.d("Fan", "motion else")
+                return super.onTouchEvent(event)
+            }
+        }
     }
 
     private fun drawTargetArc(canvas: Canvas, index: Int, sweepAngle: Float) {
@@ -220,6 +264,15 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
     private fun getAngleOfIndexTarget(index: Int): Float {
         return 360f / itemList.size * index
+    }
+
+    private fun newRotationValue(
+        originalWheelRotation: Float,
+        originalFingerRotation: Double,
+        newFingerRotation: Double
+    ): Float {
+        val computationalRotation = newFingerRotation - originalFingerRotation
+        return (originalWheelRotation + computationalRotation.toFloat() + 360f) % 360f
     }
 
     private fun demoDrawArc(canvas: Canvas) {
