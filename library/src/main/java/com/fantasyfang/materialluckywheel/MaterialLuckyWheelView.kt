@@ -20,6 +20,7 @@ import com.fantasyfang.materialluckywheel.model.Vector
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 
 
 class MaterialLuckyWheelView @JvmOverloads constructor(
@@ -29,10 +30,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val radius = 400f
     private val degToPi = Math.PI / 180
     private var isRunning = false
-    var isTouchEnabled = false
     private var viewRotation = 0f
     private var fingerRotation = 0.0
     private var downPressTime = 0L
+    private var upPressTime = 0L
+
+    var isTouchEnabled = false
+    var touchThreshold = 700
     private lateinit var itemList: List<LuckyItem>
     private var listener: MaterialLuckyWheelViewListener? = null
 
@@ -125,8 +129,22 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 true
             }
             MotionEvent.ACTION_UP -> {
+                newFingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y));
+                val computedRotation =
+                    newRotationValue(viewRotation, fingerRotation, newFingerRotation)
+                fingerRotation = newFingerRotation
 
-                Log.d("Fan", "ACTION_UP")
+                upPressTime = event.eventTime
+                if (upPressTime - downPressTime > touchThreshold) {
+                    // Disregarding the touch since the tap is too slow
+                    return true
+                }
+                //TODO: check rotation
+                rotateTo(getFallBackRandomIndex(), RotationDirection.Clockwise)
+
+                Log.d("Fan", "ACTION_UP downPressTime:$downPressTime")
+                Log.d("Fan", "ACTION_UP upPressTime:$upPressTime")
+                Log.d("Fan", "ACTION_UP interval:${upPressTime - downPressTime}")
                 true
             }
             else -> {
@@ -274,6 +292,8 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         val computationalRotation = newFingerRotation - originalFingerRotation
         return (originalWheelRotation + computationalRotation.toFloat() + 360f) % 360f
     }
+
+    private fun getFallBackRandomIndex(): Int = Random.Default.nextInt(itemList.size)
 
     private fun demoDrawArc(canvas: Canvas) {
         canvas.drawArc(outsideRectF, 0f, 120f, true, arcPaint)
