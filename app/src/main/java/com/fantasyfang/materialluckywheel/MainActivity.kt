@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         val luckyWheelView = findViewById<MaterialLuckyWheelView>(R.id.lucky_view)
         luckyWheelView.setItemList(items)
-        luckyWheelView.setMaterialLuckyWheelViewListener(object :
+        luckyWheelView.setMaterialLuckyWheelViewListener(object : //TODO: change to lambda
             MaterialLuckyWheelView.MaterialLuckyWheelViewListener {
             override fun onItemSelected(item: LuckyItem) {
                 Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG).show()

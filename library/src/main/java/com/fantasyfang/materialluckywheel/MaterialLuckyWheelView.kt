@@ -7,6 +7,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -27,8 +28,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val radius = 400f
     private val degToPi = Math.PI / 180
     private var isRunning = false
+    var isTouchEnabled = false
     private lateinit var itemList: List<LuckyItem>
-    var listener: MaterialLuckyWheelViewListener? = null
+    private var listener: MaterialLuckyWheelViewListener? = null
 
     interface MaterialLuckyWheelViewListener {
         fun onItemSelected(item: LuckyItem)
@@ -84,6 +86,10 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 )
             }
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return super.onTouchEvent(event)
     }
 
     private fun drawTargetArc(canvas: Canvas, index: Int, sweepAngle: Float) {
