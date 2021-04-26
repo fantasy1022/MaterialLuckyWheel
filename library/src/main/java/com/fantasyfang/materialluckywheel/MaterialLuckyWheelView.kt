@@ -105,6 +105,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        Log.d("Fan", "onTouchEvent:$isRunning, $isTouchEnabled")
         if (isRunning || !isTouchEnabled) {
             return false
         }
