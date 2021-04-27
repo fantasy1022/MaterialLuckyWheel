@@ -33,6 +33,8 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
         val constraintLayout = inflater.inflate(R.layout.lucky_wheel_layout, this, false)
         materialLuckyWheelView = constraintLayout.findViewById(R.id.wheel_view)
 
+
+
         rotateBtn = constraintLayout.findViewById(R.id.press_btn1)
         rotateBtn.setOnClickListener {
             materialLuckyWheelView.rotateTo(getRandomIndex())
