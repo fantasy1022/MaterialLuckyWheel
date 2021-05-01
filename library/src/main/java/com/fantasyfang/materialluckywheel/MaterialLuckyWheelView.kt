@@ -15,6 +15,7 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.withTranslation
 import com.fantasyfang.library.R
+import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
@@ -269,7 +270,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         rotationDegree: Float
     ) {
         val offset = 45f // get from sweep angle
-        val targetDegree = getAngleOfIndexTarget(index) + rotationDegree + offset
+        val targetDegree = index.getAngleOfIndexTarget(itemList.size) + rotationDegree + offset
 
         animate()
             .setInterpolator(DecelerateInterpolator())
@@ -289,10 +290,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             .start()
     }
 
-    private fun getAngleOfIndexTarget(index: Int): Float {
-        return 360f / itemList.size * index
-    }
-
     private fun newRotationValue(
         originalWheelRotation: Float,
         originalFingerRotation: Double,
@@ -303,11 +300,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     private fun getFallBackRandomIndex(): Int = Random.Default.nextInt(itemList.size)
-
-    private fun drawCursor(canvas: Canvas) {
-//        draw
-
-    }
 
     private fun demoDrawArc(canvas: Canvas) {
         canvas.drawArc(outsideRectF, 0f, 120f, true, arcPaint)

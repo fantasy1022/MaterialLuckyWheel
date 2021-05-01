@@ -1,5 +1,9 @@
 package com.fantasyfang.materialluckywheel
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -7,9 +11,14 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.Button
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.animation.addListener
 import com.fantasyfang.library.R
+import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import kotlin.random.Random
 
@@ -20,6 +29,16 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
 
     private var materialLuckyWheelView: MaterialLuckyWheelView
     private var rotateBtn: Button
+
+
+    //Cursor config
+    private var cursorView: ImageView
+    private var animCursor: ObjectAnimator
+
+    //    private var animCursorSlowDown: ValueAnimator
+    // 上一次的總角度
+    var preAngle = 0f
+
     private lateinit var itemList: List<LuckyItem>
     var isTouchEnabled: Boolean = false
         set(value) {
@@ -28,19 +47,70 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
         }
 
     init {
-        Log.d("Fan", "MaterialLuckyWheelLayout init")
         val inflater = LayoutInflater.from(getContext())
         val constraintLayout = inflater.inflate(R.layout.lucky_wheel_layout, this, false)
         materialLuckyWheelView = constraintLayout.findViewById(R.id.wheel_view)
-
-
+        cursorView = constraintLayout.findViewById(R.id.cursorView)
 
         rotateBtn = constraintLayout.findViewById(R.id.press_btn1)
         rotateBtn.setOnClickListener {
-            materialLuckyWheelView.rotateTo(getRandomIndex())
+            val index = getRandomIndex()
+            materialLuckyWheelView.rotateTo(index)
+            startCursorAnimation(index)
         }
 
+        animCursor = ObjectAnimator.ofFloat(cursorView, "rotation", 0f, -30f, 0f).apply {
+            duration = 200
+            interpolator = AccelerateInterpolator()
+            repeatCount = 0
+            repeatMode = ValueAnimator.RESTART
+        }
+
+        cursorView.pivotX = 0f
+        cursorView.pivotY = cursorView.width / 2.toFloat()
+
         addView(constraintLayout)
+    }
+
+    private fun startCursorAnimation(targetIndex: Int) {
+        val targetAngle: Float = 360f - targetIndex.getAngleOfIndexTarget(itemList.size)
+
+//        animCursor.start()
+        ValueAnimator.ofFloat(0f, targetAngle).apply {
+            duration = 5000L // TODO: unify with wheel view
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animation ->
+                Log.d("Fan", "update:${animation.animatedValue}")
+                val currentAngle: Float =
+                    animation.animatedValue as Float + 360f / itemList.size / 2
+                // 這次轉的角度
+                val angleOfThisTurn: Float = currentAngle - preAngle
+                // 是否執行動畫
+                val isStartAnimation = (angleOfThisTurn / (360f / itemList.size))
+
+                if (isStartAnimation > 0f && !animCursor.isRunning) {
+                    Log.d("Fan", "start()");
+                    preAngle += isStartAnimation * (360f / itemList.size)
+                    animCursor.start();
+                }
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    Log.d("Fan", "onAnimationEnd:${animation}")
+                    preAngle = 0f
+                }
+            })
+            start()
+        }
+//        if ( !animCursorSlowDown.isStarted() ) {
+//            animCursorSlowDown.start();
+//        }
+//        animate()
+//            .setInterpolator(DecelerateInterpolator())
+//            .setDuration(5000L)
+//            .setUpdateListener {  }
+//            .rotation(targetAngle)
+//            .start()
     }
 
     fun setItemList(itemList: List<LuckyItem>) {
