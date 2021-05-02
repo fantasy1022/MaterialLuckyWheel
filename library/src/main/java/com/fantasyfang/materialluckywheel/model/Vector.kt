@@ -19,5 +19,4 @@ data class Vector(var x: Float, var y: Float) {
 
     infix fun scale(number: Float): Vector =
         Vector(x * number, y * number)
-
 }

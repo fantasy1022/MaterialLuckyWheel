@@ -3,7 +3,15 @@ package com.fantasyfang.materialluckywheel
 import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Rect
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
@@ -14,7 +22,6 @@ import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.withTranslation
-import com.fantasyfang.library.R
 import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
@@ -24,9 +31,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-
 class MaterialLuckyWheelView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
     private val radius = 400f
@@ -46,7 +54,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         fun onItemSelected(item: LuckyItem)
     }
 
-    //Paint
+    // Paint
     private val arcPaint = Paint().apply {
         isAntiAlias = true
         strokeWidth = 10f
@@ -58,7 +66,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             resources.displayMetrics
         )
     }
-    //Custom property
+    // Custom property
 
     private val outsideRectF = RectF(-radius, -radius, radius, radius)
 
@@ -73,33 +81,33 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         val centerVector = Vector(canvasWidth * 0.5f, canvasHeight * 0.5f)
         val sweepAngle = 360f / itemList.size
 
-        //1. Set central
+        // 1. Set central
         canvas.withTranslation(centerVector.x, centerVector.y) {
             itemList.forEachIndexed { index, luckyItem ->
-                //2.1 Draw content of pie color
+                // 2.1 Draw content of pie color
                 arcPaint.color = ContextCompat.getColor(context, luckyItem.backgroundColor)
                 arcPaint.style = Paint.Style.FILL_AND_STROKE
                 drawTargetArc(canvas, index, sweepAngle)
 
-                //2.2 Draw border of pie color
+                // 2.2 Draw border of pie color
                 arcPaint.color = ContextCompat.getColor(context, android.R.color.white)
                 arcPaint.style = Paint.Style.STROKE
                 drawTargetArc(canvas, index, sweepAngle)
 
-                //3 Draw text
+                // 3 Draw text
                 drawTargetText(canvas, index, sweepAngle, luckyItem.text, luckyItem.backgroundColor)
 
-                //4 Draw icon
+                // 4 Draw icon
                 drawImage(
                     canvas, index, sweepAngle,
                     BitmapFactory.decodeResource(resources, luckyItem.icon)
                 )
 
-                //5 Draw center image
+                // 5 Draw center image
 //                drawCircle(0f, 0f, 50f, centerImagePaint)
 //                drawText("GO!",0f,0f,textPaint)
 
-                //6 Draw cursor
+                // 6 Draw cursor
 //                drawCursor(canvas)
             }
         }
@@ -124,7 +132,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 viewRotation = rotation
                 Log.d("Fan", "ACTION_DOWN rotation:$rotation")
-                fingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y));
+                fingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y))
                 Log.d("Fan", "ACTION_DOWN fingerRotation:$fingerRotation")
                 downPressTime = event.eventTime
                 Log.d("Fan", "ACTION_DOWN downPressTime:$downPressTime")
@@ -133,13 +141,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
             MotionEvent.ACTION_MOVE -> {
                 newFingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y))
-                //TODO: check rotation is consist and view jitter
+                // TODO: check rotation is consist and view jitter
                 rotation = newRotationValue(viewRotation, fingerRotation, newFingerRotation)
                 Log.d("Fan", "ACTION_MOVE")
                 true
             }
             MotionEvent.ACTION_UP -> {
-                newFingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y));
+                newFingerRotation = Math.toDegrees(atan2(x - xCenter, yCenter - y))
                 val computedRotation =
                     newRotationValue(viewRotation, fingerRotation, newFingerRotation)
                 fingerRotation = newFingerRotation
@@ -149,7 +157,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                     // Disregarding the touch since the tap is too slow
                     return true
                 }
-                //TODO: check rotation
+                // TODO: check rotation
                 rotateTo(getFallBackRandomIndex(), RotationDirection.Clockwise)
 
                 Log.d("Fan", "ACTION_UP downPressTime:$downPressTime")
@@ -175,24 +183,27 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     private fun drawTargetText(
-        canvas: Canvas, index: Int, sweepAngle: Float, text: String,
+        canvas: Canvas,
+        index: Int,
+        sweepAngle: Float,
+        text: String,
         @ColorRes backgroundColor: Int
     ) {
         val path = Path()
         path.addArc(outsideRectF, index * sweepAngle, sweepAngle)
 
-        //if (textColor == 0)
+        // if (textColor == 0)
         textPaint.color = if (backgroundColor.isColorDark()) Color.WHITE else Color.BLACK
 
         val textWidth: Float = textPaint.measureText(text)
         val hOffset = (radius * Math.PI / itemList.size - textWidth / 2).toFloat()
-        val vOffset = 80f//TODO: Use topTextPadding
+        val vOffset = 80f // TODO: Use topTextPadding
 
         canvas.drawTextOnPath(text, path, hOffset, vOffset, textPaint)
     }
 
     private fun drawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
-        //TODO: check scale, rotate and position logic
+        // TODO: check scale, rotate and position logic
         when (index) {
             0 -> {
                 val matrix = Matrix().apply {
@@ -263,7 +274,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             .start()
     }
 
-    //Set the last round
+    // Set the last round
     private fun decelerateAnimation(
         index: Int,
         durationInMilliSeconds: Long,
@@ -317,7 +328,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
         Log.d("Fam", "x:$x")
         Log.d("Fam", "y:$y")
-        //TODO: check position
+        // TODO: check position
         val rect = Rect(
             (x - imgWidth / 2).toInt(), (y - imgWidth / 2).toInt(),
             (x + imgWidth / 2).toInt(), (y + imgWidth / 2).toInt()

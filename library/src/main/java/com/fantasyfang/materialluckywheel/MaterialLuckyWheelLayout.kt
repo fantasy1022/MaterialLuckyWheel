@@ -22,16 +22,16 @@ import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import kotlin.random.Random
 
-
 class MaterialLuckyWheelLayout @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var materialLuckyWheelView: MaterialLuckyWheelView
     private var rotateBtn: Button
 
-
-    //Cursor config
+    // Cursor config
     private var cursorView: ImageView
     private var animCursor: ObjectAnimator
 
@@ -89,14 +89,14 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
                 val isStartAnimation = (angleOfThisTurn / (360f / itemList.size))
 
                 if (isStartAnimation > 0f && !animCursor.isRunning) {
-                    Log.d("Fan", "start()");
+                    Log.d("Fan", "start()")
                     preAngle += isStartAnimation * (360f / itemList.size)
-                    animCursor.start();
+                    animCursor.start()
                 }
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
-                    Log.d("Fan", "onAnimationEnd:${animation}")
+                    Log.d("Fan", "onAnimationEnd:$animation")
                     preAngle = 0f
                 }
             })
@@ -139,5 +139,4 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
     }
 
     private fun getRandomIndex(): Int = Random.Default.nextInt(itemList.size)
-
 }

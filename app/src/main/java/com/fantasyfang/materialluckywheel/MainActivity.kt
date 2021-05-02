@@ -1,14 +1,9 @@
 package com.fantasyfang.materialluckywheel
 
-import android.R.attr.data
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import kotlin.random.Random
-
 
 class MainActivity : AppCompatActivity() {
     private val items = listOf(
@@ -21,11 +16,13 @@ class MainActivity : AppCompatActivity() {
             "9000",
             R.drawable.amazon_icon,
             R.color.teal_700
-        ), LuckyItem(
+        ),
+        LuckyItem(
             "2000",
             R.drawable.dropbox_icon,
             R.color.purple_700
-        ), LuckyItem(
+        ),
+        LuckyItem(
             "100",
             R.drawable.disney_icon,
             R.color.purple_200
