@@ -16,11 +16,11 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.animation.addListener
 import com.fantasyfang.library.R
 import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import kotlin.random.Random
+
 
 class MaterialLuckyWheelLayout @JvmOverloads constructor(
     context: Context,
@@ -47,8 +47,8 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
         }
 
     init {
-        val inflater = LayoutInflater.from(getContext())
-        val constraintLayout = inflater.inflate(R.layout.lucky_wheel_layout, this, false)
+        val constraintLayout = inflate(context, R.layout.lucky_wheel_layout, this)
+
         materialLuckyWheelView = constraintLayout.findViewById(R.id.wheel_view)
         cursorView = constraintLayout.findViewById(R.id.cursorView)
 
@@ -68,8 +68,16 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
 
         cursorView.pivotX = 0f
         cursorView.pivotY = cursorView.width / 2.toFloat()
+    }
 
-        addView(constraintLayout)
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val width = getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
+        val height = getDefaultSize(suggestedMinimumHeight, heightMeasureSpec)
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
     }
 
     private fun startCursorAnimation(targetIndex: Int) {
