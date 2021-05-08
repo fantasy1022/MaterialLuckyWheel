@@ -22,12 +22,14 @@ import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.withTranslation
+import com.fantasyfang.materialluckywheel.extension.convertDpToPixel
 import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.log
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -36,6 +38,17 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
+
+    private val TAG = MaterialLuckyWheelView::class.java.simpleName
+
+    companion object {
+        private const val minimumEdgeDp = 360
+    }
+
+    init {
+        minimumWidth = minimumEdgeDp.convertDpToPixel(context)
+        minimumHeight = minimumEdgeDp.convertDpToPixel(context)
+    }
 
     private val radius = 400f
     private val degToPi = Math.PI / 180
@@ -75,9 +88,24 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         invalidate()
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        val desiredWidth = suggestedMinimumWidth + paddingLeft + paddingRight
+        val desiredHeight = suggestedMinimumHeight + paddingTop + paddingBottom
+        Log.d(TAG, "onMeasure: $desiredWidth * $desiredHeight")
+
+        val measureWidth = measureDimension(desiredWidth, widthMeasureSpec)
+        val measureHeight = measureDimension(desiredHeight, heightMeasureSpec)
+        Log.d(TAG, "onMeasure measureDimension: $measureWidth * $measureHeight")
+        setMeasuredDimension(measureWidth, measureHeight)
+    }
+
     override fun onDraw(canvas: Canvas) {
         val canvasWidth = canvas.width
         val canvasHeight = canvas.height
+        Log.d(TAG,"canvas:$canvasWidth * $canvasHeight")
+
         val centerVector = Vector(canvasWidth * 0.5f, canvasHeight * 0.5f)
         val sweepAngle = 360f / itemList.size
 
@@ -171,6 +199,29 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             }
         }
     }
+
+
+    private fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
+        // TODO: 2021/5/8 寫判斷大小相關的邏輯
+        var result: Int
+        val specMode = MeasureSpec.getMode(measureSpec)
+        val specSize = MeasureSpec.getSize(measureSpec)
+
+        if (specMode == MeasureSpec.EXACTLY) {// match_parent
+            result = specSize
+        } else {
+            result = desiredSize
+            if (specMode == MeasureSpec.AT_MOST) { // wrap_content
+                result = Math.min(result, specSize)
+            }
+        }
+
+        if (result < desiredSize) {
+            Log.e(TAG, "The view is too small, the content might get cut")
+        }
+        return result
+    }
+
 
     private fun drawTargetArc(canvas: Canvas, index: Int, sweepAngle: Float) {
         canvas.drawArc(
