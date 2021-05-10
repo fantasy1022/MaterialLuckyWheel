@@ -7,7 +7,6 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.fantasyfang.library.R
 import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import kotlin.random.Random
-
 
 class MaterialLuckyWheelLayout @JvmOverloads constructor(
     context: Context,

@@ -29,7 +29,6 @@ import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.log
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -104,7 +103,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val canvasWidth = canvas.width
         val canvasHeight = canvas.height
-        Log.d(TAG,"canvas:$canvasWidth * $canvasHeight")
+        Log.d(TAG, "canvas:$canvasWidth * $canvasHeight")
 
         val centerVector = Vector(canvasWidth * 0.5f, canvasHeight * 0.5f)
         val sweepAngle = 360f / itemList.size
@@ -200,14 +199,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
     }
 
-
     private fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
         // TODO: 2021/5/8 寫判斷大小相關的邏輯
         var result: Int
         val specMode = MeasureSpec.getMode(measureSpec)
         val specSize = MeasureSpec.getSize(measureSpec)
 
-        if (specMode == MeasureSpec.EXACTLY) {// match_parent
+        if (specMode == MeasureSpec.EXACTLY) { // match_parent
             result = specSize
         } else {
             result = desiredSize
@@ -221,7 +219,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
         return result
     }
-
 
     private fun drawTargetArc(canvas: Canvas, index: Int, sweepAngle: Float) {
         canvas.drawArc(
