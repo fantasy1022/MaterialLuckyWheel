@@ -40,9 +40,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val TAG = MaterialLuckyWheelView::class.java.simpleName
 
     companion object {
-        private const val minimumEdgeDp = 240
-        private const val minimumMarginDp = 10
-        private const val minimumIconEdgeDp = 40
+        private const val minimumEdgeDp = 260
+        private const val minimumMarginDp = 20
+        private const val defaultBorderWidthDp = 10
     }
 
     init {
@@ -72,6 +72,10 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val arcPaint = Paint().apply {
         isAntiAlias = true
         strokeWidth = 10f
+    }
+    private val outerPaint = Paint().apply {
+        isAntiAlias = true
+        strokeWidth = defaultBorderWidthDp.convertDpToPixel(context).toFloat()
     }
     private val textPaint = Paint().apply {
         isAntiAlias = true
@@ -122,6 +126,11 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 arcPaint.color = ContextCompat.getColor(context, android.R.color.white)
                 arcPaint.style = Paint.Style.STROKE
                 drawTargetArc(canvas, index, sweepAngle)
+
+                // 2.3 Draw circle border
+                outerPaint.color = ContextCompat.getColor(context, android.R.color.holo_purple)
+                outerPaint.style = Paint.Style.STROKE
+                canvas.drawCircle(0f, 0f, radius, outerPaint)
 
                 // 3 Draw text
                 drawTargetText(canvas, index, sweepAngle, luckyItem.text, luckyItem.backgroundColor)
