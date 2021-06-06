@@ -14,7 +14,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.fantasyfang.library.R
 import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.model.LuckyItem
@@ -24,7 +24,7 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val TAG = MaterialLuckyWheelLayout::class.java.simpleName
     private var materialLuckyWheelView: MaterialLuckyWheelView
@@ -107,6 +107,7 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
             }
         }
 
+        // TODO set layout final size
         setMeasuredDimension(1000, 1000)
     }
 

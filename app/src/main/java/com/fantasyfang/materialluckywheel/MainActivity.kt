@@ -26,7 +26,18 @@ class MainActivity : AppCompatActivity() {
             "100",
             R.drawable.disney_icon,
             R.color.purple_200
+        ),
+        LuckyItem(
+            "500",
+            R.drawable.disney_icon,
+            R.color.purple_200
+        ),
+        LuckyItem(
+            "600",
+            R.drawable.disney_icon,
+            R.color.purple_200
         )
+
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
