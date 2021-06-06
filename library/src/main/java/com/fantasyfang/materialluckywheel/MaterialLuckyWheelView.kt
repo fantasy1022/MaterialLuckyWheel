@@ -253,6 +253,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     // TODO: 2021/6/6 Extract const
+    // set parameter image position(x, y), imgWidth
     private fun drawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
         val imgWidth = (radius / 2 * Math.PI) * 0.7 / itemList.size
 
