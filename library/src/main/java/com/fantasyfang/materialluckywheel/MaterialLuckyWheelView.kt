@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
@@ -41,7 +40,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val TAG = MaterialLuckyWheelView::class.java.simpleName
 
     companion object {
-        private const val minimumEdgeDp = 360
+        private const val minimumEdgeDp = 240
+        private const val minimumMarginDp = 10
+        private const val minimumIconEdgeDp = 40
     }
 
     init {
@@ -49,7 +50,8 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         minimumHeight = minimumEdgeDp.convertDpToPixel(context)
     }
 
-    private val radius = 400f
+    private val radius =
+        (minimumEdgeDp.convertDpToPixel(context) - minimumMarginDp.convertDpToPixel(context) * 2) / 2f
     private val degToPi = Math.PI / 180
     private var isRunning = false
     private var viewRotation = 0f
@@ -245,46 +247,28 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
         val textWidth: Float = textPaint.measureText(text)
         val hOffset = (radius * Math.PI / itemList.size - textWidth / 2).toFloat()
-        val vOffset = 80f // TODO: Use topTextPadding
+        val vOffset = 60f // TODO: Use topTextPadding
 
         canvas.drawTextOnPath(text, path, hOffset, vOffset, textPaint)
     }
 
+    // TODO: 2021/6/6 Extract const
     private fun drawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
-        // TODO: check scale, rotate and position logic
-        when (index) {
-            0 -> {
-                val matrix = Matrix().apply {
-                    postScale(0.5f, 0.5f)
-                    postRotate(135f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
-                    postTranslate(50f, 50f)
-                }
-                canvas.drawBitmap(bitmap, matrix, null)
-            }
-            1 -> {
-                val matrix = Matrix().apply {
-                    postScale(0.5f, 0.5f)
-                    postRotate(225f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
-                    postTranslate(-250f, 50f)
-                }
-                canvas.drawBitmap(bitmap, matrix, null)
-            }
-            2 -> {
-                val matrix = Matrix().apply {
-                    postScale(0.5f, 0.5f)
-                    postRotate(315f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
-                    postTranslate(-250f, -250f)
-                }
-                canvas.drawBitmap(bitmap, matrix, null)
-            }
-            3 -> {
-                val matrix = Matrix().apply {
-                    postScale(0.5f, 0.5f)
-                    postRotate(45f, bitmap.width.toFloat() / 4, bitmap.height.toFloat() / 4)
-                    postTranslate(50f, -250f)
-                }
-                canvas.drawBitmap(bitmap, matrix, null)
-            }
+        val imgWidth = (radius / 2 * Math.PI) * 0.7 / itemList.size
+
+        val angle = (index * sweepAngle + 360f / itemList.size / 2)
+        val angleDegree = angle * Math.PI / 180
+
+        val x = (radius * 0.5 * Math.cos(angleDegree)).toFloat()
+        val y = (radius * 0.5 * Math.sin(angleDegree)).toFloat()
+
+        val rect = Rect(
+            -imgWidth.toInt(), -imgWidth.toInt(),
+            imgWidth.toInt(), imgWidth.toInt()
+        )
+        canvas.withTranslation(x, y) {
+            rotate(90 + angle)
+            canvas.drawBitmap(bitmap, null, rect, null)
         }
     }
 
