@@ -69,53 +69,6 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
         cursorView.pivotY = cursorView.width / 2.toFloat()
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val width = getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
-        val height = getDefaultSize(suggestedMinimumHeight, heightMeasureSpec)
-        Log.d(TAG, "Layout onMeasure: $width * $height")
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            if (child.visibility != GONE) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
-// Update our size information based on the layout params.  Children
-                // that asked to be positioned on the left or right go in those gutters.
-                // Update our size information based on the layout params.  Children
-                // that asked to be positioned on the left or right go in those gutters.
-                val lp = child.layoutParams as LayoutParams
-//                if ( lp.leftMargin=== LayoutParams.) {
-//                    mLeftWidth += Math.max(
-//                        attr.maxWidth,
-//                        child.measuredWidth + lp.leftMargin + lp.rightMargin
-//                    )
-//                } else if (lp.position === androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.POSITION_RIGHT) {
-//                    mRightWidth += Math.max(
-//                        attr.maxWidth,
-//                        child.measuredWidth + lp.leftMargin + lp.rightMargin
-//                    )
-//                } else {
-//                    attr.maxWidth = Math.max(
-//                        attr.maxWidth,
-//                        child.measuredWidth + lp.leftMargin + lp.rightMargin
-//                    )
-//                }
-//                attr.maxHeight = Math.max(
-//                    attr.maxHeight,
-//                    child.measuredHeight + lp.topMargin + lp.bottomMargin
-//                )
-//                childState = combineMeasuredStates(childState, child.measuredState)
-            }
-        }
-
-        // TODO set layout final size
-        setMeasuredDimension(1000, 1000)
-    }
-
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        Log.d(TAG, "Layout onLayout: $left  $top $right $bottom")
-    }
-
     private fun startCursorAnimation(targetIndex: Int) {
         val targetAngle: Float = 360f - targetIndex.getAngleOfIndexTarget(itemList.size)
 
