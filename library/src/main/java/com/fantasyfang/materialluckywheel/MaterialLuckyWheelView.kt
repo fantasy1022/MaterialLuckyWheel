@@ -43,7 +43,8 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     companion object {
         private const val minimumEdgeDp = 260
         private const val minimumMarginDp = 20
-        private const val defaultBorderWidthDp = 10
+        private const val defaultBorderWidthDp = 5
+        private const val defaultPaddingDp = 30
     }
 
     init {
@@ -55,7 +56,8 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 //        (minimumEdgeDp.convertDpToPixel(context) - minimumMarginDp.convertDpToPixel(context) * 2) / 2f
     private var radius = 0f
     private var range = RectF()
-
+    private var padding =
+        defaultPaddingDp.convertDpToPixel(context) + defaultBorderWidthDp.convertDpToPixel(context)
     private val degToPi = Math.PI / 180
     private var isRunning = false
     private var viewRotation = 0f
@@ -103,7 +105,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         Log.d(TAG, "onMeasure: $measuredWidth, $measuredHeight ")
 
         // mPadding = if (paddingLeft == 0) 10 else paddingLeft
-        radius = (width.toFloat() - 50) / 2
+        radius = (width.toFloat() - padding) / 2
 
         setMeasuredDimension(width, width)
 //        val desiredWidth = suggestedMinimumWidth + paddingLeft + paddingRight
