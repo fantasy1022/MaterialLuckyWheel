@@ -27,9 +27,6 @@ import com.fantasyfang.materialluckywheel.extension.isColorDark
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
 import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
 import kotlin.random.Random
 
 class MaterialLuckyWheelView @JvmOverloads constructor(
@@ -41,24 +38,19 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val TAG = MaterialLuckyWheelView::class.java.simpleName
 
     companion object {
-        private const val minimumEdgeDp = 260
-        private const val minimumMarginDp = 20
         private const val defaultBorderWidthDp = 5
         private const val defaultPaddingDp = 30
+        private const val touchThreshold = 700
     }
 
-    init {
-        minimumWidth = minimumEdgeDp.convertDpToPixel(context)
-        minimumHeight = minimumEdgeDp.convertDpToPixel(context)
+    enum class RotationDirection(val value: Int) {
+        Clockwise(1), Counterclockwise(-1)
     }
 
-    //    private val minimumRadius =
-//        (minimumEdgeDp.convertDpToPixel(context) - minimumMarginDp.convertDpToPixel(context) * 2) / 2f
     private var radius = 0f
     private var range = RectF()
     private var padding =
         defaultPaddingDp.convertDpToPixel(context) + defaultBorderWidthDp.convertDpToPixel(context)
-    private val degToPi = Math.PI / 180
     private var isRunning = false
     private var viewRotation = 0f
     private var fingerRotation = 0.0
@@ -66,7 +58,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private var upPressTime = 0L
 
     var isTouchEnabled = false
-    var touchThreshold = 700
     private lateinit var itemList: List<LuckyItem>
     private var listener: MaterialLuckyWheelViewListener? = null
 
@@ -108,23 +99,11 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         radius = (width.toFloat() - padding) / 2
 
         setMeasuredDimension(width, width)
-//        val desiredWidth = suggestedMinimumWidth + paddingLeft + paddingRight
-//        val desiredHeight = suggestedMinimumHeight + paddingTop + paddingBottom
-//        Log.d(TAG, "view onMeasure: $desiredWidth * $desiredHeight")
-//
-//        val measureWidth = measureDimension(desiredWidth, widthMeasureSpec)
-//        val measureHeight = measureDimension(desiredHeight, heightMeasureSpec)
-//        Log.d("Fan", "onMeasure measureDimension: $measureWidth * $measureHeight")
-//        Log.d("Fan", "onMeasure widthMeasureSpec: $widthMeasureSpec")
-//        setMeasuredDimension(measureWidth, measureHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
         val canvasWidth = canvas.width
         val canvasHeight = canvas.height
-        Log.d(TAG, "canvas:$canvasWidth * $canvasHeight")
-//        radius = min(canvasWidth, canvasHeight).toFloat()
-//        radius = max(radius, minimumRadius)
         Log.d(TAG, "radius:$radius")
 
         val centerVector = Vector(canvasWidth * 0.5f, canvasHeight * 0.5f)
@@ -157,13 +136,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                     canvas, index, sweepAngle,
                     BitmapFactory.decodeResource(resources, luckyItem.icon)
                 )
-
-                // 5 Draw center image
-//                drawCircle(0f, 0f, 50f, centerImagePaint)
-//                drawText("GO!",0f,0f,textPaint)
-
-                // 6 Draw cursor
-//                drawCursor(canvas)
             }
         }
     }
@@ -227,30 +199,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
     }
 
-    private fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
-        var result: Int
-        val specMode = MeasureSpec.getMode(measureSpec)
-        val specSize = MeasureSpec.getSize(measureSpec)
-
-        Log.d(TAG, "measureDimension: specMode:$specMode")
-        Log.d(TAG, "measureDimension: specSize:$specSize")
-        if (specMode == MeasureSpec.EXACTLY) { // match_parent
-            Log.d(TAG, "measureDimension: MeasureSpec.EXACTLY")
-            result = specSize
-        } else {
-            result = desiredSize
-            if (specMode == MeasureSpec.AT_MOST) { // wrap_content
-                Log.d(TAG, "measureDimension:  MeasureSpec.AT_MOST")
-                result = Math.min(result, specSize)
-            }
-        }
-
-        if (result < desiredSize) {
-            Log.e(TAG, "The view is too small, the content might get cut")
-        }
-        return result
-    }
-
     private fun drawTargetArc(canvas: Canvas, index: Int, sweepAngle: Float) {
         canvas.drawArc(
             range,
@@ -271,7 +219,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         val path = Path()
         path.addArc(range, index * sweepAngle, sweepAngle)
 
-        // if (textColor == 0)
         textPaint.color = if (backgroundColor.isColorDark()) Color.WHITE else Color.BLACK
 
         val textWidth: Float = textPaint.measureText(text)
@@ -282,15 +229,14 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     // TODO: 2021/6/6 Extract const
-    // set parameter image position(x, y), imgWidth
     private fun drawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
         val imgWidth = (radius / 2 * Math.PI) * 0.7 / itemList.size
 
         val angle = (index * sweepAngle + 360f / itemList.size / 2)
         val angleDegree = angle * Math.PI / 180
 
-        val x = (radius * 0.5 * Math.cos(angleDegree)).toFloat()
-        val y = (radius * 0.5 * Math.sin(angleDegree)).toFloat()
+        val x = (radius * 0.6 * Math.cos(angleDegree)).toFloat()
+        val y = (radius * 0.6 * Math.sin(angleDegree)).toFloat()
 
         val rect = Rect(
             -imgWidth.toInt(), -imgWidth.toInt(),
@@ -373,32 +319,4 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     }
 
     private fun getFallBackRandomIndex(): Int = Random.Default.nextInt(itemList.size)
-
-    private fun demoDrawArc(canvas: Canvas) {
-        canvas.drawArc(range, 0f, 120f, true, arcPaint)
-        canvas.drawArc(range, 120f, 120f, true, arcPaint)
-        canvas.drawArc(range, 240f, 120f, true, arcPaint)
-    }
-
-    private fun demoDrawImage(canvas: Canvas, index: Int, sweepAngle: Float, bitmap: Bitmap) {
-        val imgWidth = radius / itemList.size
-        val angle = ((index * sweepAngle + 360f / itemList.size / 2) * Math.PI / 180)
-
-        Log.d("Fam", "angle:$angle")
-        val x = (radius / 2 * cos(angle))
-        val y = (radius / 2 * sin(angle))
-
-        Log.d("Fam", "x:$x")
-        Log.d("Fam", "y:$y")
-        // TODO: check position
-        val rect = Rect(
-            (x - imgWidth / 2).toInt(), (y - imgWidth / 2).toInt(),
-            (x + imgWidth / 2).toInt(), (y + imgWidth / 2).toInt()
-        )
-        canvas.drawBitmap(bitmap, null, rect, null)
-    }
-
-    enum class RotationDirection(val value: Int) {
-        Clockwise(1), Counterclockwise(-1)
-    }
 }

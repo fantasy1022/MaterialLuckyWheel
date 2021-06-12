@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         val luckyWheelLayout = findViewById<MaterialLuckyWheelLayout>(R.id.lucky_view)
         luckyWheelLayout.setItemList(items)
         luckyWheelLayout.isTouchEnabled = true
+        // TODO: 2021/6/12 Set rotation listener and rotation target index 
 //        luckyWheelView.setMaterialLuckyWheelViewListener(object : //TODO: change to lambda
 //            MaterialLuckyWheelView.MaterialLuckyWheelViewListener {
 //            override fun onItemSelected(item: LuckyItem) {
