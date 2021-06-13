@@ -59,9 +59,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
     var isTouchEnabled = false
     private lateinit var itemList: List<LuckyItem>
-    private var listener: MaterialLuckyWheelViewListener? = null
+    private var listener: LuckyWheelItemSelectedListener? = null
 
-    interface MaterialLuckyWheelViewListener {
+    interface LuckyWheelItemSelectedListener {
         fun onItemSelected(item: LuckyItem)
     }
 
@@ -248,7 +248,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
     }
 
-    fun setMaterialLuckyWheelViewListener(listener: MaterialLuckyWheelViewListener) {
+    fun setLuckyWheelItemSelectedListener(listener: LuckyWheelItemSelectedListener) {
         this.listener = listener
     }
 

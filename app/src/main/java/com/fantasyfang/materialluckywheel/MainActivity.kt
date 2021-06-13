@@ -1,6 +1,8 @@
 package com.fantasyfang.materialluckywheel
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import kotlin.random.Random
@@ -46,23 +48,23 @@ class MainActivity : AppCompatActivity() {
         val luckyWheelLayout = findViewById<MaterialLuckyWheelLayout>(R.id.lucky_view)
         luckyWheelLayout.setItemList(items)
         luckyWheelLayout.isTouchEnabled = true
-        // TODO: 2021/6/12 Set rotation listener and rotation target index 
-//        luckyWheelView.setMaterialLuckyWheelViewListener(object : //TODO: change to lambda
-//            MaterialLuckyWheelView.MaterialLuckyWheelViewListener {
-//            override fun onItemSelected(item: LuckyItem) {
-//                Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG).show()
-//            }
-//        })
 
-//        findViewById<Button>(R.id.rotate_btn).setOnClickListener {
-//            luckyWheelLayout.rotateTo(
-//                getRandomIndex().apply {
-//                    Log.d("Fan", "rotate index: $this")
-//                },
-//                MaterialLuckyWheelView.RotationDirection.Clockwise,
-//                5000
-//            )
-//        }
+        luckyWheelLayout.luckyWheelItemSelectedListener =
+            object : // TODO: 2021/6/13 Change to lambda
+                MaterialLuckyWheelView.LuckyWheelItemSelectedListener {
+                override fun onItemSelected(item: LuckyItem) {
+                    Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+
+        luckyWheelLayout.luckyWheelItemGoListener = object : // TODO: 2021/6/13 Change to lambda
+            MaterialLuckyWheelLayout.LuckyWheelItemGoListener {
+            override fun onClick(view: View) {
+                val index = 1
+                luckyWheelLayout.startLuckyWheelWithTargetIndex(index)
+            }
+        }
     }
 
     private fun getRandomIndex(): Int {

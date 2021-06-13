@@ -45,6 +45,26 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
             materialLuckyWheelView.isTouchEnabled = value
         }
 
+    var luckyWheelItemSelectedListener: MaterialLuckyWheelView.LuckyWheelItemSelectedListener? = null
+        set(value) {
+            value?.let {
+                materialLuckyWheelView.setLuckyWheelItemSelectedListener(it)
+            }
+        }
+
+    var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null
+        set(value) {
+            field = value
+        }
+
+    interface LuckyWheelItemGoListener {
+        fun onClick(view: View)
+    }
+
+//    fun setLuckyWheelItemSelectedListener(listener: MaterialLuckyWheelView.LuckyWheelItemSelectedListener) {
+//        materialLuckyWheelView.setLuckyWheelItemSelectedListener(listener)
+//    }
+
     init {
         val constraintLayout = inflate(context, R.layout.lucky_wheel_layout, this)
 
@@ -52,10 +72,12 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
         cursorView = constraintLayout.findViewById(R.id.cursorView)
 
         rotateBtn = constraintLayout.findViewById(R.id.press_btn1)
-        rotateBtn.setOnClickListener {
-            val index = getRandomIndex()
-            materialLuckyWheelView.rotateTo(index)
-            startCursorAnimation(index)
+        rotateBtn.setOnClickListener { view ->
+            luckyWheelItemGoListener?.let {
+                it.onClick(view)
+            } ?: run {
+                defaultRotate()
+            }
         }
 
         animCursor = ObjectAnimator.ofFloat(cursorView, "rotation", 0f, -30f, 0f).apply {
@@ -67,6 +89,15 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
 
         cursorView.pivotX = 0f
         cursorView.pivotY = cursorView.width / 2.toFloat()
+    }
+
+    private fun defaultRotate() {
+        startLuckyWheelWithTargetIndex(getRandomIndex())
+    }
+
+    fun startLuckyWheelWithTargetIndex(index: Int) {
+        materialLuckyWheelView.rotateTo(index)
+        startCursorAnimation(index)
     }
 
     private fun startCursorAnimation(targetIndex: Int) {
