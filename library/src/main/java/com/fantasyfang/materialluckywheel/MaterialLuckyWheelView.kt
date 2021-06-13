@@ -38,7 +38,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val TAG = MaterialLuckyWheelView::class.java.simpleName
 
     companion object {
-        private const val defaultBorderWidthDp = 5
+        private const val defaultBorderWidthDp = 15
         private const val defaultPaddingDp = 30
         private const val touchThreshold = 700
     }
@@ -124,7 +124,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 drawTargetArc(canvas, index, sweepAngle)
 
                 // 2.3 Draw circle border
-                outerPaint.color = ContextCompat.getColor(context, android.R.color.holo_purple)
+                outerPaint.color = ContextCompat.getColor(context, android.R.color.white)
                 outerPaint.style = Paint.Style.STROKE
                 canvas.drawCircle(0f, 0f, radius, outerPaint)
 
@@ -223,8 +223,8 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
         val textWidth: Float = textPaint.measureText(text)
         val hOffset = (radius * Math.PI / itemList.size - textWidth / 2).toFloat()
-        val vOffset = 60f // TODO: Use topTextPadding
-
+        // TODO: 2021/6/13 Add top padding
+        val vOffset = defaultBorderWidthDp.convertDpToPixel(context).toFloat() + 40
         canvas.drawTextOnPath(text, path, hOffset, vOffset, textPaint)
     }
 

@@ -10,34 +10,33 @@ class MainActivity : AppCompatActivity() {
         LuckyItem(
             "1000",
             R.drawable.chrome_icon,
-            R.color.teal_200
+            R.color.red
         ),
         LuckyItem(
             "9000",
             R.drawable.amazon_icon,
-            R.color.teal_700
+            R.color.orange
         ),
         LuckyItem(
             "2000",
             R.drawable.dropbox_icon,
-            R.color.purple_700
+            R.color.yellow
         ),
         LuckyItem(
             "100",
             R.drawable.disney_icon,
-            R.color.purple_200
+            R.color.light_blue
         ),
         LuckyItem(
             "500",
             R.drawable.disney_icon,
-            R.color.purple_200
+            R.color.blue
         ),
         LuckyItem(
             "600",
             R.drawable.disney_icon,
-            R.color.purple_200
+            R.color.purple
         )
-
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -15,20 +15,21 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/press_btn1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
         android:insetBottom="0dp"
         android:padding="0dp"
         android:text="Go"
+        app:backgroundTint="@android:color/white"
         app:iconPadding="0dp"
         app:layout_constraintBottom_toBottomOf="@id/wheel_view"
         app:layout_constraintLeft_toLeftOf="@id/wheel_view"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/wheel_view"
-        app:shapeAppearanceOverlay="@style/buttomShape" />
+        app:shapeAppearanceOverlay="@style/buttonShape" />
 
     <com.fantasyfang.materialluckywheel.CursorView
         android:id="@+id/cursorViewCentral"
@@ -44,6 +45,7 @@
         android:id="@+id/cursorView"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/ic_marker"
         app:layout_constraintLeft_toLeftOf="@id/wheel_view"
         app:layout_constraintRight_toRightOf="@id/wheel_view"
