@@ -256,10 +256,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         index: Int,
         rotationDirection: RotationDirection = RotationDirection.Clockwise,
         durationInMilliSeconds: Long = 5000L,
-        rotationDegree: Float = 5040f,
+        numberOfRound: Int = 15,
         timeInterpolator: TimeInterpolator = AccelerateInterpolator()
     ) {
-
         animate()
             .setInterpolator(timeInterpolator)
             .setDuration(durationInMilliSeconds / 2)
@@ -272,13 +271,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 override fun onAnimationEnd(animation: Animator?) {
                     rotation = 0f
                     isRunning = false
-                    decelerateAnimation(index, durationInMilliSeconds / 2, rotationDegree)
+                    decelerateAnimation(index, durationInMilliSeconds / 2, numberOfRound)
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {}
                 override fun onAnimationRepeat(animation: Animator?) {}
             })
-            .rotation(rotationDegree * rotationDirection.value)
+            .rotation(numberOfRound * 360f * rotationDirection.value)
             .start()
     }
 
@@ -286,10 +285,12 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private fun decelerateAnimation(
         index: Int,
         durationInMilliSeconds: Long,
-        rotationDegree: Float
+        numberOfRound: Int
     ) {
-        val offset = 45f // get from sweep angle
-        val targetDegree = index.getAngleOfIndexTarget(itemList.size) + rotationDegree + offset
+        val sweepAngle = 360 / itemList.size
+        val offset = Random.Default.nextInt(sweepAngle) - sweepAngle / 2 // -sweepAngle / 2 ~ sweepAngle / 2
+        val targetDegree =
+            numberOfRound * 360f + 270f - index.getAngleOfIndexTarget(itemList.size) - 360f / itemList.size / 2 + offset
 
         animate()
             .setInterpolator(DecelerateInterpolator())

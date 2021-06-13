@@ -45,12 +45,13 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
             materialLuckyWheelView.isTouchEnabled = value
         }
 
-    var luckyWheelItemSelectedListener: MaterialLuckyWheelView.LuckyWheelItemSelectedListener? = null
+    var luckyWheelItemSelectedListener: MaterialLuckyWheelView.LuckyWheelItemSelectedListener? =
+        null
         set(value) {
-            value?.let {
-                materialLuckyWheelView.setLuckyWheelItemSelectedListener(it)
+                value?.let {
+                    materialLuckyWheelView.setLuckyWheelItemSelectedListener(it)
+                }
             }
-        }
 
     var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null
         set(value) {
@@ -96,8 +97,10 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
     }
 
     fun startLuckyWheelWithTargetIndex(index: Int) {
-        materialLuckyWheelView.rotateTo(index)
-        startCursorAnimation(index)
+        if (index < 0) throw IllegalArgumentException()
+        val targetIndex = index % itemList.size
+        materialLuckyWheelView.rotateTo(targetIndex)
+        startCursorAnimation(targetIndex)
     }
 
     private fun startCursorAnimation(targetIndex: Int) {
@@ -158,7 +161,7 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
     private fun isMaterialLuckyWheelView(view: View): Boolean {
         if (view is ViewGroup) {
             for (i in 0 until childCount) {
-                if (isMaterialLuckyWheelView((view as ViewGroup).getChildAt(i))) {
+                if (isMaterialLuckyWheelView((view).getChildAt(i))) {
                     return true
                 }
             }
