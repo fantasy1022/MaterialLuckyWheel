@@ -45,15 +45,24 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
             materialLuckyWheelView.isTouchEnabled = value
         }
 
-    var luckyWheelItemSelectedListener: MaterialLuckyWheelView.LuckyWheelItemSelectedListener? =
-        null
+    // TODO: 2021/6/14 do two layer listener
+    var luckyWheelLayoutStateListener: LuckyWheelLayoutStateListener? = null
         set(value) {
-                value?.let {
-                    materialLuckyWheelView.setLuckyWheelItemSelectedListener(it)
-                }
-            }
+            materialLuckyWheelView.setLuckyWheelStateListener(object : // TODO: 2021/6/13 Change to lambda
+                    MaterialLuckyWheelView.LuckyWheelStateListener {
+                    override fun onItemSelected(item: LuckyItem) {
+                        value?.onItemSelected(item)
+                    }
 
-    var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null
+                    override fun onRotateStart() {
+                        value?.onRotateStart()
+                        // TODO: 2021/6/14 get parameter
+                        startCursorAnimation(2, 5000)
+                    }
+                })
+        }
+
+    var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null // LuckyWheelGoClickListener
         set(value) {
             field = value
         }
@@ -62,9 +71,10 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
         fun onClick(view: View)
     }
 
-//    fun setLuckyWheelItemSelectedListener(listener: MaterialLuckyWheelView.LuckyWheelItemSelectedListener) {
-//        materialLuckyWheelView.setLuckyWheelItemSelectedListener(listener)
-//    }
+    interface LuckyWheelLayoutStateListener {
+        fun onRotateStart()
+        fun onItemSelected(item: LuckyItem)
+    }
 
     init {
         val constraintLayout = inflate(context, R.layout.lucky_wheel_layout, this)
@@ -90,25 +100,44 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
 
         cursorView.pivotX = 0f
         cursorView.pivotY = cursorView.width / 2.toFloat()
+
+//        luckyWheelStateListener =
+// //            object : // TODO: 2021/6/13 Change to lambda
+// //                MaterialLuckyWheelView.LuckyWheelStateListener {
+// //                override fun onItemSelected(item: LuckyItem) {
+// //
+// //                }
+// //
+// //                override fun onRotateStart() {
+// //                    startCursorAnimation(2, 5000)
+// //                }
+// //            }
     }
 
     private fun defaultRotate() {
         startLuckyWheelWithTargetIndex(getRandomIndex())
     }
 
-    fun startLuckyWheelWithTargetIndex(index: Int) {
+    fun startLuckyWheelWithTargetIndex(
+        index: Int,
+        durationInMilliSeconds: Long = 5000L,
+        numberOfRound: Int = 15
+    ) {
         if (index < 0) throw IllegalArgumentException()
         val targetIndex = index % itemList.size
-        materialLuckyWheelView.rotateTo(targetIndex)
-        startCursorAnimation(targetIndex)
+        materialLuckyWheelView.rotateTo(
+            targetIndex,
+            durationInMilliSeconds = durationInMilliSeconds,
+            numberOfRound = numberOfRound
+        )
+//        startCursorAnimation(targetIndex, durationInMilliSeconds)
     }
 
-    private fun startCursorAnimation(targetIndex: Int) {
+    private fun startCursorAnimation(targetIndex: Int, durationInMilliSeconds: Long) {
         val targetAngle: Float = 360f - targetIndex.getAngleOfIndexTarget(itemList.size)
-
-//        animCursor.start()
+        // TODO: 2021/6/14 Check target angle use
         ValueAnimator.ofFloat(0f, targetAngle).apply {
-            duration = 5000L // TODO: unify with wheel view
+            duration = durationInMilliSeconds
             interpolator = DecelerateInterpolator()
             addUpdateListener { animation ->
                 Log.d("Fan", "update:${animation.animatedValue}")
@@ -120,7 +149,7 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
                 val isStartAnimation = (angleOfThisTurn / (360f / itemList.size))
 
                 if (isStartAnimation > 0f && !animCursor.isRunning) {
-                    Log.d("Fan", "start()")
+                    Log.d("Fan", "start() $preAngle")
                     preAngle += isStartAnimation * (360f / itemList.size)
                     animCursor.start()
                 }
@@ -133,6 +162,8 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
             })
             start()
         }
+
+        //        animCursor.start()
 //        if ( !animCursorSlowDown.isStarted() ) {
 //            animCursorSlowDown.start();
 //        }

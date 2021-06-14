@@ -49,12 +49,15 @@ class MainActivity : AppCompatActivity() {
         luckyWheelLayout.setItemList(items)
         luckyWheelLayout.isTouchEnabled = true
 
-        luckyWheelLayout.luckyWheelItemSelectedListener =
+        luckyWheelLayout.luckyWheelLayoutStateListener =
             object : // TODO: 2021/6/13 Change to lambda
-                MaterialLuckyWheelView.LuckyWheelItemSelectedListener {
+                MaterialLuckyWheelLayout.LuckyWheelLayoutStateListener {
                 override fun onItemSelected(item: LuckyItem) {
                     Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG)
                         .show()
+                }
+
+                override fun onRotateStart() {
                 }
             }
 
