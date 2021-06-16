@@ -45,13 +45,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val luckyWheelLayout = findViewById<MaterialLuckyWheelLayout>(R.id.lucky_view)
-        luckyWheelLayout.setItemList(items)
-        luckyWheelLayout.isTouchEnabled = true
+        val luckyWheelView = findViewById<MaterialLuckyWheelView>(R.id.lucky_view)
+        luckyWheelView.setItemList(items)
+        luckyWheelView.isTouchEnabled = true
 
-        luckyWheelLayout.luckyWheelLayoutStateListener =
+        luckyWheelView.luckyWheelViewStateListener =
             object : // TODO: 2021/6/13 Change to lambda
-                MaterialLuckyWheelLayout.LuckyWheelLayoutStateListener {
+                MaterialLuckyWheelView.LuckyWheelViewStateListener {
                 override fun onItemSelected(item: LuckyItem) {
                     Toast.makeText(this@MainActivity, "Select ${item.text} !", Toast.LENGTH_LONG)
                         .show()
@@ -61,10 +61,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-        luckyWheelLayout.luckyWheelItemGoListener = object : // TODO: 2021/6/13 Change to lambda
-            MaterialLuckyWheelLayout.LuckyWheelItemGoListener {
+        luckyWheelView.luckyWheelItemGoListener = object : // TODO: 2021/6/13 Change to lambda
+            MaterialLuckyWheelView.LuckyWheelItemGoListener {
             override fun onClick(view: View) {
-                luckyWheelLayout.startLuckyWheelWithTargetIndex(getRandomIndex())
+                luckyWheelView.startLuckyWheelWithTargetIndex(getRandomIndex())
             }
         }
     }
