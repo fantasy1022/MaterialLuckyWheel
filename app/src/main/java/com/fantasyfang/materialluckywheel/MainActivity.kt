@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         luckyWheelLayout.luckyWheelItemGoListener = object : // TODO: 2021/6/13 Change to lambda
             MaterialLuckyWheelLayout.LuckyWheelItemGoListener {
             override fun onClick(view: View) {
-                val index = 1
                 luckyWheelLayout.startLuckyWheelWithTargetIndex(getRandomIndex())
             }
         }

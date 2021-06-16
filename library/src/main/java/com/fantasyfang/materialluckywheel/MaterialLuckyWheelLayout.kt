@@ -54,10 +54,9 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
                         value?.onItemSelected(item)
                     }
 
-                    override fun onRotateStart() {
+                    override fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long) {
                         value?.onRotateStart()
-                        // TODO: 2021/6/14 get parameter
-                        startCursorAnimation(2, 5000)
+                        startCursorAnimation(index, rotateDurationInMilliSeconds)
                     }
                 })
         }
@@ -100,18 +99,6 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
 
         cursorView.pivotX = 0f
         cursorView.pivotY = cursorView.width / 2.toFloat()
-
-//        luckyWheelStateListener =
-// //            object : // TODO: 2021/6/13 Change to lambda
-// //                MaterialLuckyWheelView.LuckyWheelStateListener {
-// //                override fun onItemSelected(item: LuckyItem) {
-// //
-// //                }
-// //
-// //                override fun onRotateStart() {
-// //                    startCursorAnimation(2, 5000)
-// //                }
-// //            }
     }
 
     private fun defaultRotate() {
@@ -130,7 +117,6 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
             durationInMilliSeconds = durationInMilliSeconds,
             numberOfRound = numberOfRound
         )
-//        startCursorAnimation(targetIndex, durationInMilliSeconds)
     }
 
     private fun startCursorAnimation(targetIndex: Int, durationInMilliSeconds: Long) {
@@ -162,17 +148,6 @@ class MaterialLuckyWheelLayout @JvmOverloads constructor(
             })
             start()
         }
-
-        //        animCursor.start()
-//        if ( !animCursorSlowDown.isStarted() ) {
-//            animCursorSlowDown.start();
-//        }
-//        animate()
-//            .setInterpolator(DecelerateInterpolator())
-//            .setDuration(5000L)
-//            .setUpdateListener {  }
-//            .rotation(targetAngle)
-//            .start()
     }
 
     fun setItemList(itemList: List<LuckyItem>) {

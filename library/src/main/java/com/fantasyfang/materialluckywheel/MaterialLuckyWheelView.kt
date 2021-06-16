@@ -62,7 +62,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private var listener: LuckyWheelStateListener? = null
 
     interface LuckyWheelStateListener {
-        fun onRotateStart()
+        fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long)
         fun onItemSelected(item: LuckyItem)
     }
 
@@ -267,7 +267,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             .setListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator?) {
                     isRunning = true
-                    listener?.onRotateStart()
+                    listener?.onRotateStart(index, durationInMilliSeconds)
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
