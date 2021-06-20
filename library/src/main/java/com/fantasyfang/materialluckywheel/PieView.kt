@@ -37,6 +37,7 @@ class PieView @JvmOverloads constructor(
 
     private val TAG = PieView::class.java.simpleName
 
+    //TODO: remove, set from WheelView
     companion object {
         private const val defaultBorderWidthDp = 15
         private const val defaultPaddingDp = 30

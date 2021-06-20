@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MaterialLuckyWheelView">
+        <attr name="mlwOuterRingColor" format="color" />
+        <attr name="mlwOuterRingWidth" format="dimension" />
+
+        <attr name="mlwPieTextSize" format="dimension" />
+        <attr name="mlwPieTextColor" format="color" />
+        <attr name="mlwPieEdgeWidth" format="dimension" />
+        <attr name="mlwPieEdgeColor" format="color" />
+
+        <attr name="mlwCenterRadius" format="dimension" />
+        <attr name="mlwCenterText" format="string" />
+        <attr name="mlwCenterTextSize" format="dimension" />
+        <attr name="mlwCenterTextColor" format="color" />
+        <attr name="mlwCenterBackgroundColor" format="color" />
+
+        <attr name="mlwCursor" format="reference" />
+
+        <attr name="lkwTextColor" format="color" />
+        <attr name="lkwTextPadding" format="dimension" />
+        <attr name="lkwTopTextSize" format="dimension" />
+    </declare-styleable>
+
+</resources>
