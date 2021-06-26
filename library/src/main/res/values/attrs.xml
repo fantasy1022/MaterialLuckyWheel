@@ -5,13 +5,12 @@
         <attr name="mlwOuterRingWidth" format="dimension" />
 
         <attr name="mlwPieTextSize" format="dimension" />
-        <attr name="mlwPieTextColor" format="color" />
         <attr name="mlwPieEdgeWidth" format="dimension" />
         <attr name="mlwPieEdgeColor" format="color" />
 
         <attr name="mlwCenterRadius" format="dimension" />
         <attr name="mlwCenterText" format="string" />
-        <attr name="mlwCenterTextSize" format="dimension" />
+        <attr name="mlwCenterTextSize" format="integer" />
         <attr name="mlwCenterTextColor" format="color" />
         <attr name="mlwCenterBackgroundColor" format="color" />
 

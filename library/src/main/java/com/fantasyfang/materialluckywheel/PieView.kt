@@ -13,7 +13,6 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
-import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
@@ -37,7 +36,7 @@ class PieView @JvmOverloads constructor(
 
     private val TAG = PieView::class.java.simpleName
 
-    //TODO: remove, set from WheelView
+    // TODO: remove, set from WheelView
     companion object {
         private const val defaultBorderWidthDp = 15
         private const val defaultPaddingDp = 30
@@ -47,6 +46,20 @@ class PieView @JvmOverloads constructor(
     enum class RotationDirection(val value: Int) {
         Clockwise(1), Counterclockwise(-1)
     }
+
+    // Parameter
+    private var outerRingColor: Int = 0
+    private var outerRingWidth: Int = 0
+    private var pieTextSize: Int = 0
+    private var pieTextColor: Int = 0
+    private var pieEdgeWidth: Int = 0
+    private var pieEdgeColor: Int = 0
+
+    private var centerRadius: Int = 0
+    private var centerText: String = ""
+    private var centerTextSize: Int = 0
+    private var centerTextColor: Int = 0
+    private var centerBackgroundColor: Int = 0
 
     private var radius = 0f
     private var range = RectF()
@@ -68,25 +81,55 @@ class PieView @JvmOverloads constructor(
     }
 
     // Paint
+    private val piePaint = Paint().apply {
+        isAntiAlias = true
+        style = Paint.Style.FILL_AND_STROKE
+    }
     private val arcPaint = Paint().apply {
         isAntiAlias = true
-        strokeWidth = 10f
+        style = Paint.Style.STROKE
     }
     private val outerPaint = Paint().apply {
         isAntiAlias = true
-        strokeWidth = defaultBorderWidthDp.convertDpToPixel(context).toFloat()
+        style = Paint.Style.STROKE
     }
     private val textPaint = Paint().apply {
         isAntiAlias = true
-        textSize = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP, 14f,
-            resources.displayMetrics
-        )
     }
-    // Custom property
 
+    // Custom property
     fun setItemList(itemList: List<LuckyItem>) {
         this.itemList = itemList
+        invalidate()
+    }
+
+    fun setOuterRingColor(outerRingColor: Int) {
+        this.outerRingColor = outerRingColor
+        outerPaint.color = outerRingColor
+        invalidate()
+    }
+
+    fun setOuterRingWidth(outerRingWidth: Int) {
+        this.outerRingWidth = outerRingWidth
+        outerPaint.strokeWidth = outerRingWidth.toFloat()
+        invalidate()
+    }
+
+    fun setPieTextSize(pieTextSize: Int) {
+        this.pieTextSize = pieTextSize
+        textPaint.textSize = pieTextSize.toFloat()
+        invalidate()
+    }
+
+    fun setPieEdgeWidth(pieEdgeWidth: Int) {
+        this.pieEdgeWidth = pieEdgeWidth
+        arcPaint.strokeWidth = pieEdgeWidth.toFloat()
+        invalidate()
+    }
+
+    fun setPieEdgeColor(pieEdgeColor: Int) {
+        this.pieEdgeColor = pieEdgeColor
+        arcPaint.color = pieEdgeColor
         invalidate()
     }
 
@@ -116,18 +159,19 @@ class PieView @JvmOverloads constructor(
         canvas.withTranslation(centerVector.x, centerVector.y) {
             itemList.forEachIndexed { index, luckyItem ->
                 // 2.1 Draw content of pie color
-                arcPaint.color = ContextCompat.getColor(context, luckyItem.backgroundColor)
-                arcPaint.style = Paint.Style.FILL_AND_STROKE
-                drawTargetArc(canvas, index, sweepAngle)
+                piePaint.color = ContextCompat.getColor(context, luckyItem.backgroundColor)
+                canvas.drawArc(
+                    range,
+                    index * sweepAngle,
+                    sweepAngle,
+                    true,
+                    piePaint
+                )
 
                 // 2.2 Draw border of pie color
-                arcPaint.color = ContextCompat.getColor(context, android.R.color.white)
-                arcPaint.style = Paint.Style.STROKE
-                drawTargetArc(canvas, index, sweepAngle)
+                canvas.drawArc(range, index * sweepAngle, sweepAngle, true, arcPaint)
 
                 // 2.3 Draw circle border
-                outerPaint.color = ContextCompat.getColor(context, android.R.color.white)
-                outerPaint.style = Paint.Style.STROKE
                 canvas.drawCircle(0f, 0f, radius, outerPaint)
 
                 // 3 Draw text

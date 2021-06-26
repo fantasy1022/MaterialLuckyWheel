@@ -14,13 +14,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.Button
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fantasyfang.library.R
 import com.fantasyfang.materialluckywheel.extension.convertDpToPixel
 import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.model.LuckyItem
+import com.google.android.material.button.MaterialButton
 import kotlin.random.Random
 
 class MaterialLuckyWheelView @JvmOverloads constructor(
@@ -32,22 +32,22 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private val TAG = MaterialLuckyWheelView::class.java.simpleName
 
     companion object {
+        private const val defaultOuterRingColor = Color.WHITE
         private const val defaultOuterRingWidthDp = 15
         private const val defaultPieTextSize = 15
-        private const val defaultPieEdgeWidthDp = 10
+        private const val defaultPieEdgeWidthDp = 5
         private const val defaultCenterRadiusDp = 60
         private const val defaultCenterText = "Go"
-        private const val defaultCenterTextSize = 20
-
-        private const val defaultPaddingDp = 30
-        private const val touchThreshold = 700
+        private const val defaultCenterTextSize = 14
+        private const val defaultPieEdgeColor = Color.WHITE
+        private const val defaultCenterTextColor = Color.BLACK
+        private const val defaultCenterBackgroundColor = Color.WHITE
     }
 
     // Parameter
-    private var outerRingColor: Int = 0
+    private var mlwOuterRingColor: Int = 0
     private var mlwOuterRingWidth: Int = 0
     private var mlwPieTextSize: Int = 0
-    private var mlwPieTextColor: Int = 0
     private var mlwPieEdgeWidth: Int = 0
     private var mlwPieEdgeColor: Int = 0
 
@@ -57,9 +57,9 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private var mlwCenterTextColor: Int = 0
     private var mlwCenterBackgroundColor: Int = 0
 
-
+    // UI component
     private var pieView: PieView
-    private var rotateBtn: Button
+    private var rotateBtn: MaterialButton
 
     // Cursor config
     private var cursorView: ImageView
@@ -70,21 +70,17 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             val typedArray: TypedArray =
                 context.obtainStyledAttributes(attrs, R.styleable.MaterialLuckyWheelView)
             with(typedArray) {
-                outerRingColor = getColor(
+                mlwOuterRingColor = getColor(
                     R.styleable.MaterialLuckyWheelView_mlwOuterRingColor,
-                    Color.WHITE
+                    defaultOuterRingColor
                 )
                 mlwOuterRingWidth = getDimensionPixelSize(
                     R.styleable.MaterialLuckyWheelView_mlwOuterRingWidth,
                     defaultOuterRingWidthDp.convertDpToPixel(context)
                 )
-                mlwPieTextSize = getInt(
+                mlwPieTextSize = getDimensionPixelSize(
                     R.styleable.MaterialLuckyWheelView_mlwPieTextSize,
                     defaultPieTextSize
-                )
-                mlwPieTextColor = getColor(
-                    R.styleable.MaterialLuckyWheelView_mlwPieTextColor,
-                    Color.WHITE
                 )
                 mlwPieEdgeWidth = getDimensionPixelSize(
                     R.styleable.MaterialLuckyWheelView_mlwPieEdgeWidth,
@@ -92,7 +88,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 )
                 mlwPieEdgeColor = getColor(
                     R.styleable.MaterialLuckyWheelView_mlwPieEdgeColor,
-                    Color.WHITE
+                    defaultPieEdgeColor
                 )
                 mlwCenterRadius = getDimensionPixelSize(
                     R.styleable.MaterialLuckyWheelView_mlwCenterRadius,
@@ -107,29 +103,45 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 )
                 mlwCenterTextColor = getColor(
                     R.styleable.MaterialLuckyWheelView_mlwCenterTextColor,
-                    Color.WHITE
+                    defaultCenterTextColor
                 )
                 mlwCenterBackgroundColor = getColor(
                     R.styleable.MaterialLuckyWheelView_mlwCenterBackgroundColor,
-                    Color.WHITE
+                    defaultCenterBackgroundColor
                 )
-
             }
-
+            typedArray.recycle()
         }
 
         val constraintLayout = inflate(context, R.layout.lucky_wheel_layout, this)
 
         pieView = constraintLayout.findViewById(R.id.wheel_view)
+        with(pieView) {
+            setOuterRingWidth(mlwOuterRingWidth)
+            setOuterRingColor(mlwOuterRingColor)
+            setPieTextSize(mlwPieTextSize)
+            setPieEdgeWidth(mlwPieEdgeWidth)
+            setPieEdgeColor(mlwPieEdgeColor)
+        }
+
         cursorView = constraintLayout.findViewById(R.id.cursorView)
 
         rotateBtn = constraintLayout.findViewById(R.id.press_btn1)
-        rotateBtn.setOnClickListener { view ->
-            luckyWheelItemGoListener?.let {
-                it.onClick(view)
-            } ?: run {
-                defaultRotate()
+        with(rotateBtn) {
+            setOnClickListener { view ->
+                luckyWheelItemGoListener?.let {
+                    it.onClick(view)
+                } ?: run {
+                    defaultRotate()
+                }
             }
+
+            layoutParams.width = mlwCenterRadius
+            layoutParams.height = mlwCenterRadius
+            text = mlwCenterText
+            textSize = mlwCenterTextSize.toFloat()
+            setTextColor(mlwCenterTextColor)
+            setBackgroundColor(mlwCenterBackgroundColor)
         }
 
         animCursor = ObjectAnimator.ofFloat(cursorView, "rotation", 0f, -30f, 0f).apply {
@@ -141,11 +153,8 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
         cursorView.pivotX = 0f
         cursorView.pivotY = cursorView.width / 2.toFloat()
-
     }
 
-
-    //    private var animCursorSlowDown: ValueAnimator
     // 上一次的總角度
     var preAngle = 0f
 
@@ -160,16 +169,16 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     var luckyWheelViewStateListener: LuckyWheelViewStateListener? = null
         set(value) {
             pieView.setPieViewStateListener(object : // TODO: 2021/6/13 Change to lambda
-                PieView.PieViewStateListener {
-                override fun onItemSelected(item: LuckyItem) {
-                    value?.onItemSelected(item)
-                }
+                    PieView.PieViewStateListener {
+                    override fun onItemSelected(item: LuckyItem) {
+                        value?.onItemSelected(item)
+                    }
 
-                override fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long) {
-                    value?.onRotateStart()
-                    startCursorAnimation(index, rotateDurationInMilliSeconds)
-                }
-            })
+                    override fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long) {
+                        value?.onRotateStart()
+                        startCursorAnimation(index, rotateDurationInMilliSeconds)
+                    }
+                })
         }
 
     var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null // LuckyWheelGoClickListener
