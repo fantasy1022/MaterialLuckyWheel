@@ -66,6 +66,8 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private var cursorView: ImageView
     private var animCursor: ObjectAnimator
 
+    private var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null
+
     init {
         attrs?.apply {
             val typedArray: TypedArray =
@@ -166,38 +168,33 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
             pieView.isTouchEnabled = value
         }
 
-    // TODO: 2021/6/14 do two layer listener
-    var luckyWheelViewStateListener: LuckyWheelViewStateListener? = null
-        set(value) {
-            pieView.setPieViewStateListener(object : // TODO: 2021/6/13 Change to lambda
-                    PieView.PieViewStateListener {
-                    override fun onItemSelected(item: LuckyItem) {
-                        value?.onItemSelected(item)
-                    }
-
-                    override fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long) {
-                        value?.onRotateStart()
-                        startCursorAnimation(index, rotateDurationInMilliSeconds)
-                    }
-                })
-        }
-
-    var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null // LuckyWheelGoClickListener
-        set(value) {
-            field = value
-        }
-
-    interface LuckyWheelItemGoListener {
-        fun onClick(view: View)
+    fun interface LuckyWheelViewStateListener {
+        fun onItemSelected(item: LuckyItem)
     }
 
-    interface LuckyWheelViewStateListener {
-        fun onRotateStart()
-        fun onItemSelected(item: LuckyItem)
+    fun interface LuckyWheelItemGoListener {
+        fun onClick(view: View)
     }
 
     private fun defaultRotate() {
         startLuckyWheelWithTargetIndex(getRandomIndex())
+    }
+
+    fun setOnLuckyWheelViewStateListener(luckyWheelViewStateListener: LuckyWheelViewStateListener) {
+        pieView.setPieViewStateListener(object : // TODO: 2021/6/13 Change to lambda
+                PieView.PieViewStateListener {
+                override fun onItemSelected(item: LuckyItem) {
+                    luckyWheelViewStateListener.onItemSelected(item)
+                }
+
+                override fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long) {
+                    startCursorAnimation(index, rotateDurationInMilliSeconds)
+                }
+            })
+    }
+
+    fun setOnLuckyWheelItemGoListener(luckyWheelItemGoListener: LuckyWheelItemGoListener) {
+        this.luckyWheelItemGoListener = luckyWheelItemGoListener
     }
 
     fun setOuterRingWidth(outerRingWidth: Int) {
