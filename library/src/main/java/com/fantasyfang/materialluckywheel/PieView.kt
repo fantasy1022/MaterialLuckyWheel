@@ -51,15 +51,8 @@ class PieView @JvmOverloads constructor(
     private var outerRingColor: Int = 0
     private var outerRingWidth: Int = 0
     private var pieTextSize: Int = 0
-    private var pieTextColor: Int = 0
     private var pieEdgeWidth: Int = 0
     private var pieEdgeColor: Int = 0
-
-    private var centerRadius: Int = 0
-    private var centerText: String = ""
-    private var centerTextSize: Int = 0
-    private var centerTextColor: Int = 0
-    private var centerBackgroundColor: Int = 0
 
     private var radius = 0f
     private var range = RectF()

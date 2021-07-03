@@ -48,6 +48,19 @@ class MainActivity : AppCompatActivity() {
         val luckyWheelView = findViewById<MaterialLuckyWheelView>(R.id.lucky_view)
         luckyWheelView.setItemList(items)
         luckyWheelView.isTouchEnabled = true
+//        with(luckyWheelView) {
+//            setOuterRingWidth(30.convertDpToPixel(this@MainActivity))
+//            setOuterRingWidth(30.convertDpToPixel(this@MainActivity))
+//            setOuterRingColor(Color.WHITE)
+//            setPieTextSize(14.convertDpToPixel(this@MainActivity))
+//            setPieEdgeWidth(5.convertDpToPixel(this@MainActivity))
+//            setPieEdgeColor(Color.WHITE)
+//            setCenterRadius(60.convertDpToPixel(this@MainActivity))
+//            setCenterText("Go")
+//            setCenterTextSizeInSp(14f)
+//            setCenterTextColor(Color.WHITE)
+//            setCenterBackgroundColor(Color.WHITE)
+//        }
 
         luckyWheelView.luckyWheelViewStateListener =
             object : // TODO: 2021/6/13 Change to lambda

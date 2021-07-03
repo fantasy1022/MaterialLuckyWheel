@@ -10,18 +10,19 @@
         android:id="@+id/lucky_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:mlwOuterRingWidth="15dp"
-        app:mlwOuterRingColor="@color/white"
-        app:mlwPieTextSize="14sp"
-        app:mlwPieEdgeColor="@color/white"
-        app:mlwPieEdgeWidth="5dp"
-        app:mlwCenterRadius="60dp"
-        app:mlwCenterText="Go"
-        app:mlwCenterTextSize="14"
-        app:mlwCenterTextColor="@color/black"
-        app:mlwCenterBackgroundColor="@color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <!--    app:mlwOuterRingWidth="15dp"-->
+    <!--    app:mlwOuterRingColor="@color/white"-->
+    <!--    app:mlwPieTextSize="14sp"-->
+    <!--    app:mlwPieEdgeColor="@color/white"-->
+    <!--    app:mlwPieEdgeWidth="5dp"-->
+    <!--    app:mlwCenterRadius="60dp"-->
+    <!--    app:mlwCenterText="Go"-->
+    <!--    app:mlwCenterTextSize="14"-->
+    <!--    app:mlwCenterTextColor="@color/black"-->
+    <!--    app:mlwCenterBackgroundColor="@color/white"-->
 
     <Button
         android:id="@+id/rotate_btn"

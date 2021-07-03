@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
+import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.fantasyfang.library.R
 import com.fantasyfang.materialluckywheel.extension.convertDpToPixel
@@ -34,11 +35,11 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     companion object {
         private const val defaultOuterRingColor = Color.WHITE
         private const val defaultOuterRingWidthDp = 15
-        private const val defaultPieTextSize = 15
+        private const val defaultPieTextSizeSp = 14
         private const val defaultPieEdgeWidthDp = 5
         private const val defaultCenterRadiusDp = 60
         private const val defaultCenterText = "Go"
-        private const val defaultCenterTextSize = 14
+        private const val defaultCenterTextSize = 16
         private const val defaultPieEdgeColor = Color.WHITE
         private const val defaultCenterTextColor = Color.BLACK
         private const val defaultCenterBackgroundColor = Color.WHITE
@@ -80,7 +81,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
                 )
                 mlwPieTextSize = getDimensionPixelSize(
                     R.styleable.MaterialLuckyWheelView_mlwPieTextSize,
-                    defaultPieTextSize
+                    defaultPieTextSizeSp.convertDpToPixel(context)
                 )
                 mlwPieEdgeWidth = getDimensionPixelSize(
                     R.styleable.MaterialLuckyWheelView_mlwPieEdgeWidth,
@@ -197,6 +198,49 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
 
     private fun defaultRotate() {
         startLuckyWheelWithTargetIndex(getRandomIndex())
+    }
+
+    fun setOuterRingWidth(outerRingWidth: Int) {
+        pieView.setOuterRingWidth(outerRingWidth)
+    }
+
+    fun setOuterRingColor(@ColorInt outerRingColor: Int) {
+        pieView.setOuterRingColor(outerRingColor)
+    }
+
+    fun setPieTextSize(pieTextSize: Int) {
+        pieView.setPieTextSize(pieTextSize)
+    }
+
+    fun setPieEdgeWidth(pieEdgeWidth: Int) {
+        pieView.setPieEdgeWidth(pieEdgeWidth)
+    }
+
+    fun setPieEdgeColor(@ColorInt pieEdgeColor: Int) {
+        pieView.setPieEdgeColor(pieEdgeColor)
+    }
+
+    fun setCenterRadius(centerRadius: Int) {
+        with(rotateBtn) {
+            layoutParams.width = centerRadius
+            layoutParams.height = centerRadius
+        }
+    }
+
+    fun setCenterText(text: String) {
+        rotateBtn.text = text
+    }
+
+    fun setCenterTextSizeInSp(textSizeInSp: Float) {
+        rotateBtn.textSize = textSizeInSp
+    }
+
+    fun setCenterTextColor(@ColorInt textColor: Int) {
+        rotateBtn.setTextColor(textColor)
+    }
+
+    fun setCenterBackgroundColor(@ColorInt backgroundColor: Int) {
+        rotateBtn.setBackgroundColor(backgroundColor)
     }
 
     fun startLuckyWheelWithTargetIndex(
