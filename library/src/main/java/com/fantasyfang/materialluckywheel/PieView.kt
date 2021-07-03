@@ -36,24 +36,12 @@ class PieView @JvmOverloads constructor(
 
     private val TAG = PieView::class.java.simpleName
 
-    // TODO: remove, set from WheelView
-    companion object {
-        private const val defaultBorderWidthDp = 15
-        private const val defaultPaddingDp = 30
-        private const val touchThreshold = 700
-    }
-
-    enum class RotationDirection(val value: Int) {
-        Clockwise(1), Counterclockwise(-1)
-    }
-
     // Parameter
     private var outerRingColor: Int = 0
     private var outerRingWidth: Int = 0
     private var pieTextSize: Int = 0
     private var pieEdgeWidth: Int = 0
     private var pieEdgeColor: Int = 0
-
     private var radius = 0f
     private var range = RectF()
     private var padding =
@@ -63,15 +51,9 @@ class PieView @JvmOverloads constructor(
     private var fingerRotation = 0.0
     private var downPressTime = 0L
     private var upPressTime = 0L
-
     var isTouchEnabled = false
     private var itemList: List<LuckyItem> = emptyList()
     private var listener: PieViewStateListener? = null
-
-    interface PieViewStateListener {
-        fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long)
-        fun onItemSelected(item: LuckyItem)
-    }
 
     // Paint
     private val piePaint = Paint().apply {
@@ -361,4 +343,19 @@ class PieView @JvmOverloads constructor(
     }
 
     private fun getFallBackRandomIndex(): Int = Random.Default.nextInt(itemList.size)
+    enum class RotationDirection(val value: Int) {
+        Clockwise(1), Counterclockwise(-1)
+    }
+
+    interface PieViewStateListener {
+        fun onRotateStart(index: Int, rotateDurationInMilliSeconds: Long)
+        fun onItemSelected(item: LuckyItem)
+    }
+
+    // TODO: remove, set from WheelView
+    companion object {
+        private const val defaultBorderWidthDp = 15
+        private const val defaultPaddingDp = 30
+        private const val touchThreshold = 700
+    }
 }

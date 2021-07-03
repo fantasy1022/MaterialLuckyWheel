@@ -29,21 +29,7 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-
     private val TAG = MaterialLuckyWheelView::class.java.simpleName
-
-    companion object {
-        private const val defaultOuterRingColor = Color.WHITE
-        private const val defaultOuterRingWidthDp = 15
-        private const val defaultPieTextSizeSp = 14
-        private const val defaultPieEdgeWidthDp = 5
-        private const val defaultCenterRadiusDp = 60
-        private const val defaultCenterText = "Go"
-        private const val defaultCenterTextSize = 16
-        private const val defaultPieEdgeColor = Color.WHITE
-        private const val defaultCenterTextColor = Color.BLACK
-        private const val defaultCenterBackgroundColor = Color.WHITE
-    }
 
     // Parameter
     private var mlwOuterRingColor: Int = 0
@@ -51,12 +37,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     private var mlwPieTextSize: Int = 0
     private var mlwPieEdgeWidth: Int = 0
     private var mlwPieEdgeColor: Int = 0
-
     private var mlwCenterRadius: Int = 0
     private var mlwCenterText: String = ""
     private var mlwCenterTextSize: Int = 0
     private var mlwCenterTextColor: Int = 0
     private var mlwCenterBackgroundColor: Int = 0
+
+    private lateinit var itemList: List<LuckyItem>
 
     // UI component
     private var pieView: PieView
@@ -65,8 +52,16 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
     // Cursor config
     private var cursorView: ImageView
     private var animCursor: ObjectAnimator
-
     private var luckyWheelItemGoListener: LuckyWheelItemGoListener? = null
+
+    // 上一次的總角度
+    private var preAngle = 0f
+
+    var isTouchEnabled: Boolean = false
+        set(value) {
+            field = value
+            pieView.isTouchEnabled = value
+        }
 
     init {
         attrs?.apply {
@@ -158,26 +153,13 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         cursorView.pivotY = cursorView.width / 2.toFloat()
     }
 
-    // 上一次的總角度
-    var preAngle = 0f
-
-    private lateinit var itemList: List<LuckyItem>
-    var isTouchEnabled: Boolean = false
-        set(value) {
-            field = value
-            pieView.isTouchEnabled = value
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        for (i in 0 until childCount) {
+            if (isMaterialLuckyWheelView(getChildAt(i))) {
+                return super.dispatchTouchEvent(ev)
+            }
         }
-
-    fun interface LuckyWheelViewStateListener {
-        fun onItemSelected(item: LuckyItem)
-    }
-
-    fun interface LuckyWheelItemGoListener {
-        fun onClick(view: View)
-    }
-
-    private fun defaultRotate() {
-        startLuckyWheelWithTargetIndex(getRandomIndex())
+        return false
     }
 
     fun setOnLuckyWheelViewStateListener(luckyWheelViewStateListener: LuckyWheelViewStateListener) {
@@ -254,6 +236,11 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         )
     }
 
+    fun setItemList(itemList: List<LuckyItem>) {
+        this.itemList = itemList
+        pieView.setItemList(itemList)
+    }
+
     private fun startCursorAnimation(targetIndex: Int, durationInMilliSeconds: Long) {
         val targetAngle: Float = 360f - targetIndex.getAngleOfIndexTarget(itemList.size)
         // TODO: 2021/6/14 Check target angle use
@@ -285,20 +272,6 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         }
     }
 
-    fun setItemList(itemList: List<LuckyItem>) {
-        this.itemList = itemList
-        pieView.setItemList(itemList)
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        for (i in 0 until childCount) {
-            if (isMaterialLuckyWheelView(getChildAt(i))) {
-                return super.dispatchTouchEvent(ev)
-            }
-        }
-        return false
-    }
-
     private fun isMaterialLuckyWheelView(view: View): Boolean {
         if (view is ViewGroup) {
             for (i in 0 until childCount) {
@@ -310,5 +283,29 @@ class MaterialLuckyWheelView @JvmOverloads constructor(
         return view is PieView
     }
 
+    private fun defaultRotate() {
+        startLuckyWheelWithTargetIndex(getRandomIndex())
+    }
+
     private fun getRandomIndex(): Int = Random.Default.nextInt(itemList.size)
+    fun interface LuckyWheelViewStateListener {
+        fun onItemSelected(item: LuckyItem)
+    }
+
+    fun interface LuckyWheelItemGoListener {
+        fun onClick(view: View)
+    }
+
+    companion object {
+        private const val defaultOuterRingColor = Color.WHITE
+        private const val defaultOuterRingWidthDp = 15
+        private const val defaultPieTextSizeSp = 14
+        private const val defaultPieEdgeWidthDp = 5
+        private const val defaultCenterRadiusDp = 60
+        private const val defaultCenterText = "Go"
+        private const val defaultCenterTextSize = 16
+        private const val defaultPieEdgeColor = Color.WHITE
+        private const val defaultCenterTextColor = Color.BLACK
+        private const val defaultCenterBackgroundColor = Color.WHITE
+    }
 }
