@@ -11,33 +11,33 @@ import kotlin.random.Random
 class MainActivity : AppCompatActivity() {
     private val items = listOf(
         LuckyItem(
-            "1000",
-            R.drawable.chrome_icon,
+            "Telegram",
+            R.drawable.telegram,
             R.color.red
         ),
         LuckyItem(
-            "9000",
-            R.drawable.amazon_icon,
+            "WhatsApp",
+            R.drawable.whatsapp,
             R.color.orange
         ),
         LuckyItem(
-            "2000",
-            R.drawable.dropbox_icon,
+            "Skype",
+            R.drawable.skype,
             R.color.yellow
         ),
         LuckyItem(
-            "100",
-            R.drawable.disney_icon,
+            "Messenger",
+            R.drawable.messenger,
             R.color.light_blue
         ),
         LuckyItem(
-            "500",
-            R.drawable.disney_icon,
+            "LINE",
+            R.drawable.line,
             R.color.blue
         ),
         LuckyItem(
-            "600",
-            R.drawable.disney_icon,
+            "Slack",
+            R.drawable.slack,
             R.color.purple
         )
     )
