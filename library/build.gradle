@@ -4,6 +4,24 @@ plugins {
     id 'org.jlleitschuh.gradle.ktlint'
 }
 
+ext {
+    PUBLISH_GROUP_ID = 'com.fantasyfang'
+    PUBLISH_VERSION = '0.0.1'
+    PUBLISH_ARTIFACT_ID = 'materialluckywheel'
+    PUBLISH_DESCRIPTION = 'Material Luckywheel Android SDK'
+    PUBLISH_URL = 'https://github.com/fantasy1022/MaterialLuckyWheel'
+    PUBLISH_LICENSE_NAME = 'Apache License'
+    PUBLISH_LICENSE_URL = 'https://github.com/fantasy1022/MaterialLuckyWheel/blob/main/LICENSE'
+    PUBLISH_DEVELOPER_ID = 'fantasy1022'
+    PUBLISH_DEVELOPER_NAME = 'Fantasy1022 Project'
+    PUBLISH_DEVELOPER_EMAIL = 'pkmilk@gmail.com'
+    PUBLISH_SCM_CONNECTION = 'scm:git:github.com:fantasy1022/MaterialLuckyWheel.git'
+    PUBLISH_SCM_DEVELOPER_CONNECTION = 'scm:git:ssh://github.com/fantasy1022/MaterialLuckyWheel.git'
+    PUBLISH_SCM_URL = 'https://github.com/fantasy1022/MaterialLuckyWheel/tree/main'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
