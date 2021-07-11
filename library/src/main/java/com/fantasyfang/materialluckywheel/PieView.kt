@@ -19,10 +19,10 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.withTranslation
 import com.fantasyfang.materialluckywheel.extension.convertDpToPixel
 import com.fantasyfang.materialluckywheel.extension.getAngleOfIndexTarget
 import com.fantasyfang.materialluckywheel.extension.isColorDark
+import com.fantasyfang.materialluckywheel.extension.withTranslationCustom
 import com.fantasyfang.materialluckywheel.model.LuckyItem
 import com.fantasyfang.materialluckywheel.model.Vector
 import kotlin.math.atan2
@@ -131,7 +131,7 @@ class PieView @JvmOverloads constructor(
         range = RectF(-radius, -radius, radius, radius)
 
         // 1. Set central
-        canvas.withTranslation(centerVector.x, centerVector.y) {
+        canvas.withTranslationCustom(centerVector.x, centerVector.y) {
             itemList.forEachIndexed { index, luckyItem ->
                 // 2.1 Draw content of pie color
                 piePaint.color = ContextCompat.getColor(context, luckyItem.backgroundColor)
@@ -263,7 +263,7 @@ class PieView @JvmOverloads constructor(
             -imgWidth.toInt(), -imgWidth.toInt(),
             imgWidth.toInt(), imgWidth.toInt()
         )
-        canvas.withTranslation(x, y) {
+        canvas.withTranslationCustom(x, y) {
             rotate(90 + angle)
             canvas.drawBitmap(bitmap, null, rect, null)
         }

@@ -9,6 +9,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.withTranslation
 import com.fantasyfang.library.R
+import com.fantasyfang.materialluckywheel.extension.withTranslationCustom
 import com.fantasyfang.materialluckywheel.model.Vector
 import java.lang.Math.cos
 import java.lang.Math.sin
@@ -45,7 +46,7 @@ class CursorView @JvmOverloads constructor(
         val canvasHeight = canvas.height
         val centerVector = Vector(canvasWidth * 0.5f, canvasHeight * 0.5f)
 
-        canvas.withTranslation(centerVector.x, centerVector.y) {
+        canvas.withTranslationCustom(centerVector.x, centerVector.y) {
             drawCenterCircle()
             drawRightLine()
         }
